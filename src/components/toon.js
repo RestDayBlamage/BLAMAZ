@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { mergeVertices } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 // Schodkowe cieniowanie w stylu anime: cień / półton / światło
-function makeGradientMap(steps) {
+export function makeGradientMap(steps) {
   const data = new Uint8Array(steps.length * 4);
   steps.forEach((v, i) => data.set([v, v, v, 255], i * 4));
   const tex = new THREE.DataTexture(data, steps.length, 1, THREE.RGBAFormat);
@@ -14,8 +14,9 @@ function makeGradientMap(steps) {
 }
 
 // Obwódka: kopia siatki odwrócona tyłem i "napompowana" wzdłuż normalnych.
-// Grubość liczona w przestrzeni widoku, więc jest stała na ekranie niezależnie od zoomu.
-function makeOutlineMaterial(color, thickness) {
+// Grubość w jednostkach sceny (napis ma ~1 szerokości), więc skaluje się razem z modelem –
+// na telefonie, gdzie napis jest mniejszy, kontur też jest proporcjonalnie cieńszy.
+export function makeOutlineMaterial(color, thickness) {
   return new THREE.ShaderMaterial({
     side: THREE.BackSide,
     transparent: true,
@@ -29,7 +30,7 @@ function makeOutlineMaterial(color, thickness) {
       void main() {
         vec4 mv = modelViewMatrix * vec4(position, 1.0);
         vec3 n = normalize(normalMatrix * normal);
-        mv.xyz += n * thickness * -mv.z;
+        mv.xyz += n * thickness;
         gl_Position = projectionMatrix * mv;
       }
     `,
@@ -67,7 +68,7 @@ const DEFAULTS = {
   fill: '#ffffff',
   shell: '#ffffff',
   shellOpacity: 0.3,
-  outline: 0.006,
+  outline: 0.0045,
   steps: [185, 235, 255]
 };
 

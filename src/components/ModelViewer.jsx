@@ -6,6 +6,7 @@ import { OrbitControls, useGLTF, useFBX, useProgress, Html, Environment, Contact
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
 import * as THREE from 'three';
 import { applyToon, setToonOpacity } from './toon';
+import HeroPlayground from './HeroPlayground';
 
 // Tylko urządzenia bez myszy (telefony, tablety). Laptopy z ekranem dotykowym mają też mysz,
 // więc typ wejścia rozpoznajemy osobno dla każdego zdarzenia (pointerType).
@@ -319,7 +320,7 @@ const ModelInner = ({
 
   if (!content) return null;
   return (
-    <group ref={outer}>
+    <group ref={outer} name="bm-logo">
       <group ref={inner}>
         <primitive object={content} />
       </group>
@@ -354,6 +355,7 @@ const ModelViewer = ({
   autoRotate = true,
   autoRotateSpeed = 0.1,
   toon = false,
+  playground,
   onModelLoaded
 }) => {
   useEffect(() => void useGLTF.preload(url), [url]);
@@ -465,6 +467,8 @@ const ModelViewer = ({
             onLoaded={onModelLoaded}
           />
         </Suspense>
+
+        {playground && <HeroPlayground {...(playground === true ? {} : playground)} />}
 
         {!isTouch && (
           <DesktopControls pivot={pivot} min={minZoomDistance} max={maxZoomDistance} zoomEnabled={enableManualZoom} />

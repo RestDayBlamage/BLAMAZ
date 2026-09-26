@@ -41,9 +41,10 @@ const App: React.FC = () => {
         defaultRotationX={-12}
         defaultRotationY={8}
         toon
+        playground={isMobile ? { count: 8 } : { count: 16, scale: 0.6 }}
       />
     </div>
-    <span className="pill pill--light hint hero-hint">Drag to rotate</span>
+    <span className="pill pill--light hint hero-hint">{isMobile ? "Swipe to play" : "Drag to rotate · hover to play"}</span>
   </div>
 </section>
 
