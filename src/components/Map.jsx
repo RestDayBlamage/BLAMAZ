@@ -57,11 +57,12 @@ const Map = () => {
 
     legend.onAdd = function () {
       const div = L.DomUtil.create("div", "info legend");
-      div.style.color = "#2d2d2d";
+      div.style.color = "#061a1e";
       div.style.fontWeight = "bold";
       div.style.fontFamily = "Arial, sans-serif";
-      div.style.background = "rgba(255, 255, 255, 0.5)";
-      div.style.padding = "8px";
+      div.style.background = "#f6f4f0";
+      div.style.borderRadius = "16px";
+      div.style.padding = "12px 16px";
 
       for (const year in gpxLayers) {
         const color = gpxLayers[year].options.style.color;
@@ -84,10 +85,9 @@ const Map = () => {
     <div
       id="map"
       style={{
-        height: "400px",
+        height: "520px",
         width: "100%",
         overflow: "hidden",
-        border: "1px solid #111",
       }}
     />
   );

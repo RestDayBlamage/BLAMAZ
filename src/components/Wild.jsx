@@ -54,21 +54,21 @@ const Wild = () => {
 
     // --- Ikony dla markerów ---
     const hotIcon = L.icon({
-      iconUrl: "https://raw.githubusercontent.com/RestDayBlamage/BLMZ/main/icons/Camp.png",
+      iconUrl: "https://raw.githubusercontent.com/RestDayBlamage/BLAMAZ/main/public/Camp.png",
       iconSize: [32, 32],
       iconAnchor: [16, 32],
       popupAnchor: [0, -32],
     });
 
     const sleepIcon = L.icon({
-      iconUrl: "https://raw.githubusercontent.com/RestDayBlamage/BLMZ/main/icons/Tent.png",
+      iconUrl: "https://raw.githubusercontent.com/RestDayBlamage/BLAMAZ/main/public/Tent.png",
       iconSize: [32, 32],
       iconAnchor: [16, 32],
       popupAnchor: [0, -32],
     });
 
     const greenIcon = L.icon({
-      iconUrl: "https://raw.githubusercontent.com/RestDayBlamage/BLMZ/main/icons/Pink.png",
+      iconUrl: "https://raw.githubusercontent.com/RestDayBlamage/BLAMAZ/main/public/Pink.png",
       iconSize: [32, 32],
       iconAnchor: [16, 32],
       popupAnchor: [0, -32],
@@ -189,7 +189,7 @@ const Wild = () => {
     <div
       id="wildmap"
       style={{
-        height: "400px",
+        height: "520px",
         width: "100%",
         overflow: "hidden",
       }}

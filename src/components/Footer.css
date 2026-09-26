@@ -1,138 +1,107 @@
-
 .footer {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
   position: relative;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 2rem;
-  background-color: #f3c32b;
-  z-index: 3;
+  z-index: 2000;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--gutter, 24px) var(--gutter, 24px);
+  color: var(--c-ink, #061a1e);
+  pointer-events: auto;
 }
 
-.footer-top {
+.footer-card {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-end;
   justify-content: space-between;
-  margin-bottom: 2rem;
-  max-width: 1280px;
-  position: relative;
-  width: 100vw;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 3rem;
+  gap: 32px;
+  padding: 48px;
+  border-radius: var(--radius-large, 72px);
+  background: var(--c-green, #6dfa00);
 }
 
 .footer-brand {
-  max-width: 260px;
-}
-
-.logo {
   display: flex;
-  align-items: center;
-  font-weight: 600;
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
+  flex-direction: column;
+  gap: 24px;
+  max-width: 520px;
 }
 
 .logo-icon {
-  height: 64px;
+  width: min(280px, 60vw);
   display: block;
 }
 
-.footer-desc {
-  color: #111;
-  line-height: 1.6;
-  font-size: 0.95rem;
+.footer-claim {
+  font-family: 'Boyrun', Arial, sans-serif;
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  line-height: 1.2;
 }
 
-.footer-columns {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-  gap: 2rem;
-  flex: 1;
-  text-align: right;
+.footer .btn {
+  background: var(--c-white, #fff);
+  color: var(--c-ink, #061a1e);
 }
 
-.footer-col h4 {
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: #111;
-  font-size: 0.95rem;
+.footer .btn:hover {
+  color: var(--c-white, #fff);
 }
 
-.footer-col ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.footer-col li {
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-  color: #111;
-  cursor: pointer;
-}
-
-.footer-col li:hover {
-  text-decoration: underline;
-}
-
-.footer-bottom {
-  border-top: 1px solid #111;
-  padding-top: 1.5rem;
+/* Dolna belka – pigułka jak w Mind Robotics */
+.footer-bar {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 16px 32px;
+  border-radius: 999px;
+  background: var(--c-grey-10, #f6f4f0);
+  color: var(--c-ink, #061a1e);
+  font-family: Arial, Helvetica, sans-serif;
   font-size: 0.9rem;
-  color: #111;
-  max-width: 1280px;
-  position: relative;
-  width: 100vw;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 3rem;
 }
 
 .social-icons {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 8px;
+}
+
+.social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--c-grey-100, #dbd7ca);
+  transition: background 0.3s ease;
+}
+
+.social-icons a:hover {
+  background: var(--c-magenta, #f000ef);
 }
 
 .social-icons a img {
-  width: 22px;
-  height: 22px;
-  opacity: 0.7;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-.social-icons a img:hover {
-  opacity: 1;
-  transform: scale(1.1);
-}
-
-.social-icons span:hover {
-  opacity: 1;
-}
-
-.footer-link {
-  color: #111;
-  text-decoration: none;
-}
-
-.footer-link:hover {
-  text-decoration: underline;
-  color: #111;
+  width: 20px;
+  height: 20px;
 }
 
 .counters {
   text-align: center;
-  align-items: center;
-  margin-top: 50px;
-  margin-bottom: 50px;
+  margin-top: 32px;
   width: 100%;
+}
+
+@media (max-width: 767px) {
+  .footer-card {
+    padding: 32px;
+    border-radius: var(--radius-medium, 40px);
+  }
+
+  .footer-bar {
+    border-radius: var(--radius-small, 24px);
+    padding: 16px 24px;
+  }
 }

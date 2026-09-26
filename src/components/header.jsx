@@ -1,11 +1,11 @@
 import StaggeredMenu from "./StaggeredMenu";
 
 const menuItems = [
-  { label: 'Home', ariaLabel: 'Go to home page', link: '/BLMZ/#home' },
-  { label: 'About', ariaLabel: 'Learn about us', link: '/BLMZ/#aboutus' },
-  { label: 'Trips', ariaLabel: 'View our trips', link: '/BLMZ/#trips' },
-  { label: 'Camps', ariaLabel: 'View our camps', link: '/BLMZ/#camps' },
-  { label: 'contact', ariaLabel: 'Get in touch', link: '/BLMZ/#contact' },
+  { label: 'Home', ariaLabel: 'Go to home page', link: '/BLAMAZ/#home' },
+  { label: 'About', ariaLabel: 'Learn about us', link: '/BLAMAZ/#aboutus' },
+  { label: 'Trips', ariaLabel: 'View our trips', link: '/BLAMAZ/#trips' },
+  { label: 'Camps', ariaLabel: 'View our camps', link: '/BLAMAZ/#camps' },
+  { label: 'contact', ariaLabel: 'Get in touch', link: '/BLAMAZ/#contact' },
   { label: "email", ariaLabel: "Email me", link: "mailto:restdayblamage@gmail.com" },
 ];
 
@@ -24,12 +24,12 @@ export default function Header() {
         socialItems={socialItems}
         displaySocials
         displayItemNumbering={true}
-        menuButtonColor="#111"
-        openMenuButtonColor="#111"
+        menuButtonColor="#061a1e"
+        openMenuButtonColor="#061a1e"
         changeMenuColorOnOpen={true}
-        colors={['#d4ac1d', '#c91820']}
+        colors={['#6dfa00', '#f000ef']}
         logoUrl="https://raw.githubusercontent.com/RestDayBlamage/BLAMAZ/main/public/2027 logo.svg"
-        accentColor="#ebb630"
+        accentColor="#f000ef"
       />
     </header>
   );
