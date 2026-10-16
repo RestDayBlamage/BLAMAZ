@@ -9,9 +9,11 @@
     <meta name="keywords" content="bikepacking, cycling, bike touring, wild camping, Europe cycling trips, Balkans by bike, BLaMaZ" />
     <meta name="author" content="BLaMaZ" />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#e6e6e6" />
+    <meta name="theme-color" content="#f0f0f0" />
     <link rel="canonical" href="https://restdayblamage.github.io/BLAMAZ/" />
 
+    <!-- Favicon: litera „b” z logo (kontur) na ciemnoszarym kwadracie -->
+    <link rel="icon" type="image/svg+xml" href="/BLAMAZ/icons/favicon.svg" />
     <link rel="icon" type="image/png" sizes="32x32" href="/BLAMAZ/icons/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="48x48" href="/BLAMAZ/icons/favicon-48.png" />
     <link rel="apple-touch-icon" href="/BLAMAZ/icons/apple-touch-icon.png" />
@@ -46,41 +48,29 @@
         }
       }
     </script>
-    <!-- Ekran ładowania: widoczny od pierwszej chwili, zanim wczyta się JS. Klasa is-loading dodawana skryptem,
-         więc bez JavaScriptu ekran się nie pokaże. Kolory wpisane na sztywno (tokeny z global.css jeszcze nie działają). -->
+    <!-- Ekran ładowania jak na polymer.ws: jasnoszare tło z bladym znakiem logo → tło przechodzi w ciepłą szarość
+         (kolor spod zdjęć w hero), znak gaśnie → ekran znika, a zdjęcia „prześwietlają się” i startuje pisanie tekstów.
+         Klasa is-loading dodawana skryptem, więc bez JavaScriptu ekran się nie pokaże. Kolory wpisane na sztywno
+         (tokeny z global.css jeszcze nie działają) – lustro --c-bg i --c-stone. Sterowanie: src/utils/preloader.js -->
     <script>document.documentElement.classList.add('is-loading')</script>
     <style>
       html.is-loading, html.is-loading body { overflow: hidden; }
       #preloader { display: none; }
-      html.is-loading #preloader, #preloader.is-done { display: block; position: fixed; inset: 0; z-index: 100000; }
-      #preloader.is-done { pointer-events: none; }
-      .pl-layer, .pl-panel { position: absolute; inset: 0; transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1); }
-      .pl-layer { background: #111111; transition-delay: 0.1s; }
-      .pl-panel { display: grid; place-content: center; justify-items: center; gap: 28px; background: #f5f5f5; }
-      #preloader.is-done .pl-layer, #preloader.is-done .pl-panel { transform: translateY(-100%); }
-      .pl-logo { width: min(64vw, 480px); height: auto; animation: pl-bob 1.6s ease-in-out infinite; }
-      .pl-bar { width: min(64vw, 480px); height: 6px; overflow: hidden; border-radius: 999px; background: rgba(0, 0, 0, 0.15); }
-      .pl-bar span { display: block; width: 40%; height: 100%; border-radius: inherit; background: #111111; animation: pl-slide 1.2s ease-in-out infinite; }
+      html.is-loading #preloader, #preloader.is-done { display: grid; place-items: center; position: fixed; inset: 0; z-index: 100000; }
+      #preloader { background: #f0f0f0; transition: background-color 0.5s ease, opacity 0.4s ease; }
+      .pl-logo { width: min(40vw, 220px); height: auto; filter: brightness(0); opacity: 0.07; transition: opacity 0.5s ease; }
       .pl-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-      @keyframes pl-bob { 50% { transform: translateY(-6px); } }
-      @keyframes pl-slide { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
-      @media (prefers-reduced-motion: reduce) {
-        .pl-logo, .pl-bar span { animation: none; }
-        .pl-layer, .pl-panel { transition: opacity 0.4s ease; }
-        #preloader.is-done .pl-layer, #preloader.is-done .pl-panel { transform: none; opacity: 0; }
-      }
+      #preloader.is-done { background: #9b9793; pointer-events: none; }
+      #preloader.is-done .pl-logo { opacity: 0; }
+      #preloader.is-out { opacity: 0; }
     </style>
-    <script type="module" crossorigin src="/BLAMAZ/assets/index-BwH0IjkU.js"></script>
-    <link rel="stylesheet" crossorigin href="/BLAMAZ/assets/index-CrddH6oC.css">
+    <script type="module" crossorigin src="/BLAMAZ/assets/index-BZrgVFyP.js"></script>
+    <link rel="stylesheet" crossorigin href="/BLAMAZ/assets/index-BWmHm4nN.css">
   </head>
   <body>
     <div id="preloader" role="status" aria-live="polite">
-      <span class="pl-layer"></span>
-      <div class="pl-panel">
-        <img class="pl-logo" src="/BLAMAZ/icons/logo-wordmark.webp" alt="" width="1258" height="240" />
-        <div class="pl-bar"><span></span></div>
-        <span class="pl-sr">Loading BLaMaZ…</span>
-      </div>
+      <img class="pl-logo" src="/BLAMAZ/icons/logo-wordmark.webp" alt="" width="1258" height="240" />
+      <span class="pl-sr">Loading BLaMaZ…</span>
     </div>
     <div id="root"></div>
     <noscript>
