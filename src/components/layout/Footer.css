@@ -1,0 +1,73 @@
+/* Stopka na cały ekran: logo 3D u góry, linki „z maszyny”, prawa autorskie. Tylko tokeny z global.css. */
+
+.footer {
+  position: relative;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: var(--full-h);
+  padding: 0 var(--gutter) 32px;
+  color: var(--c-dark);
+  text-align: center;
+  pointer-events: auto;
+}
+
+.footer__logo {
+  width: 100%;
+  height: 260px;
+  cursor: grab;
+}
+
+.footer__logo:active {
+  cursor: grabbing;
+}
+
+.footer__nav {
+  margin-top: auto;
+  padding-top: 48px;
+}
+
+.footer__nav ul {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.footer__nav a {
+  display: inline-block;
+  padding: 6px 0;
+  transition: color var(--dur-fast) ease;
+}
+
+.footer__nav a:hover {
+  color: var(--c-ink);
+}
+
+.footer__legal {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 48px;
+  color: var(--c-grey-02);
+}
+
+.counters {
+  width: 100%;
+  margin-top: 32px;
+}
+
+@media (min-width: 640px) {
+  .footer__logo {
+    height: 50svh;
+    min-height: 360px;
+  }
+
+  .footer__nav ul {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 40px;
+  }
+}

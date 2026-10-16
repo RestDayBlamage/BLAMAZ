@@ -1,0 +1,571 @@
+/* ==========================================================================
+   BLaMaZ – globalny styl całej strony
+   1. Fonty
+   2. Tokeny (kolory, typografia, promienie, odstępy, ruch)  ← tu zmieniasz wygląd strony
+   3. Reset
+   4. Baza (body, zaznaczenie, nagłówek strony)
+   5. Typografia
+   6. Wspólne elementy UI (typewriter, przycisk-strzałka, panel ze zdjęciem, szkielet ładowania)
+   7. Układ sekcji
+   8. Pomocnicze
+   Kierunek wizualny: polymer.ws – pełnoekranowe zdjęcia, karty 16:9, szarości, mono wielkimi literami.
+   Style konkretnych sekcji i komponentów są obok nich (sections/*.css, components/**.css)
+   i korzystają wyłącznie z tokenów poniżej.
+   ========================================================================== */
+
+/* ---------- 1. Fonty ---------- */
+/* Tylko dwa kroje na całej stronie: bezszeryfowy (--font-sans, systemowa Helvetica/Arial) do tytułów i tekstu
+   oraz Space Mono (--font-mono, import w main.tsx) do linijek wielkimi literami, etykiet i przycisków. */
+
+/* ---------- 2. Tokeny ---------- */
+/* Kolorystyka: monochrom (szarości jak na polymer.ws) + jeden akcent – signal orange – tylko tam, gdzie kolor coś znaczy
+   (trasy na mapie, wyróżnione noclegi, rok wyprawy, zaznaczenie tekstu). Zdjęcia zostają kolorowe. Kolory są też w src/styles/tokens.js (dla kodu JS) – zmieniaj w obu miejscach */
+:root {
+  /* Kolory */
+  --c-ink: #111111;
+  --c-white: #fff;
+  --c-grey-10: #f5f5f5;
+  /* Jedyny kolor – signal orange; tekst na nim zawsze ciemny (--c-ink) */
+  --c-accent: #ff5b1f;
+  /* Szarości z polymer.ws */
+  --c-bg: #f0f0f0;
+  --c-dark: #444444;
+  --c-grey-02: #858c8f;
+  --c-silver: #d0d0d0;
+  --c-silver-60: hsla(0, 0%, 82%, 0.6);
+  --c-white-60: hsla(0, 0%, 100%, 0.6);
+  --c-stone: #9b9793; /* tło pod zdjęciami, zanim się wczytają */
+  --c-overlay: rgba(0, 0, 0, 0.55);
+
+  /* Typografia */
+  --font-sans: 'Helvetica Neue', Helvetica, Arial, sans-serif; /* tytuły (u Polymera: Milligram) */
+  --font-mono: 'Space Mono', ui-monospace, Menlo, Consolas, monospace; /* linijki „z maszyny” (u Polymera: Pitch) */
+
+  /* Promienie: karty/zdjęcia (medium), elementy w kartach (small), pigułki-przyciski (btn) */
+  --radius-small: 8px;
+  --radius-medium: 16px;
+  --radius-pill: 999px;
+  --radius-btn: 15px;
+
+  /* Odstępy */
+  --gutter: 24px;
+  --spacer-small: 64px;
+  --container-pad: 20px; /* boczny margines treści (u Polymera 20 / 40 / 80 px) */
+  --full-h: 100svh; /* wysokość sekcji „na cały ekran” – na telefonie stała (niżej) */
+
+  /* Ruch */
+  --dur-fast: 0.25s;
+  --dur-slow: 0.6s;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --tw-step: 45ms; /* tempo „pisania” jednej litery */
+
+  /* Dostępność */
+  --focus-ring: 2px solid var(--c-dark);
+}
+
+@media (min-width: 640px) {
+  :root {
+    --container-pad: 40px;
+  }
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 32px;
+    --spacer-small: 96px;
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --container-pad: 80px;
+  }
+}
+
+/* Telefon: układ „sztywny” – sekcje mają stałą wysokość w px zamiast zależnej od wysokości ekranu,
+   więc nic nie skacze przy chowaniu paska adresu ani na różnych telefonach */
+@media (max-width: 639px) {
+  :root {
+    --full-h: 640px;
+  }
+}
+
+/* ---------- 3. Reset ---------- */
+*,
+::before,
+::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+
+html {
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+  scroll-behavior: smooth;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+b,
+strong {
+  font-weight: bolder;
+}
+
+ol,
+ul,
+menu {
+  list-style: none;
+}
+
+img,
+svg,
+video,
+canvas {
+  display: block;
+  vertical-align: middle;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  background-color: transparent;
+  border-radius: 0;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* ---------- 4. Baza ---------- */
+/* Ukryte paski przewijania (decyzja projektowa) */
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
+::selection {
+  background: var(--c-accent);
+  color: var(--c-ink);
+  text-shadow: none;
+}
+
+/* Strona nie da się przesunąć na boki (clip zamiast hidden – nie psuje position: sticky) */
+html,
+body {
+  overflow-x: clip;
+  overscroll-behavior-x: none;
+}
+
+body {
+  background-color: var(--c-bg);
+  color: var(--c-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Warstwa menu nad stroną; klikalne są tylko jej elementy (pointer-events w StaggeredMenu.css) */
+.site-header {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.site-header .staggered-menu-wrapper {
+  height: 100%;
+}
+
+/* Logo u góry na środku (components/layout/BrandLogo.jsx). Animacja jak na polymer.ws: po zniknięciu ekranu
+   ładowania kontur każdej litery rysuje się po kolei (stroke-dashoffset), potem litery wypełniają się kolorem.
+   pathLength="100" na ścieżkach – długość konturu zawsze 100, niezależnie od kształtu litery. */
+.brand-logo {
+  --logo-delay: 300ms; /* start rysowania po zniknięciu ekranu ładowania */
+  --logo-draw: 650ms; /* rysowanie jednej litery */
+  --logo-stagger: 230ms; /* odstęp między literami */
+  --logo-fill-delay: 1900ms; /* start wypełniania */
+  position: absolute;
+  top: 26px;
+  left: 50%;
+  z-index: 30; /* pod panelem menu */
+  width: clamp(150px, 19vw, 260px);
+  color: var(--c-dark);
+  transform: translateX(-50%);
+  pointer-events: auto;
+  transition: color var(--dur-fast) ease;
+}
+
+/* Białe nad zdjęciami – lekki cień, żeby nie ginęło na jasnym niebie */
+.brand-logo--light {
+  color: var(--c-white);
+  filter: drop-shadow(0 1px 8px rgba(0, 0, 0, 0.3));
+}
+
+.brand-logo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.brand-logo path {
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 2px;
+  stroke-dasharray: 100;
+  stroke-linejoin: round;
+}
+
+/* Pod ekranem ładowania litery są niewidoczne */
+html.is-loading .brand-logo path {
+  fill: transparent;
+  stroke-dashoffset: 100;
+}
+
+html:not(.is-loading) .brand-logo path {
+  animation:
+    logo-draw var(--logo-draw) linear calc(var(--logo-delay) + var(--i) * var(--logo-stagger)) both,
+    logo-fill 200ms linear calc(var(--logo-fill-delay) + var(--i) * 40ms) both;
+}
+
+@keyframes logo-draw {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes logo-fill {
+  from {
+    fill: transparent;
+  }
+  to {
+    fill: currentColor;
+  }
+}
+
+.brand-logo:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 6px;
+}
+
+@media (max-width: 639px) {
+  .brand-logo {
+    top: 30px;
+    left: var(--gutter);
+    transform: none; /* na telefonie po lewej – na środku zderzałoby się z przyciskiem menu */
+  }
+}
+
+/* ---------- 5. Typografia ---------- */
+.h2 {
+  font-family: var(--font-sans);
+  font-size: clamp(1.875rem, 3vw, 2.75rem);
+  font-weight: 400;
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.h3 {
+  font-family: var(--font-sans);
+  font-size: 1.375rem;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+/* Mono wielkimi literami z rozstrzeleniem (u Polymera: .h4-pitch) */
+.pitch {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  line-height: 1.25;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+
+/* ---------- 6. Wspólne elementy UI ---------- */
+
+/* Typewriter (components/common/Typewriter.jsx): litery pojawiają się po kolei co --tw-step,
+   pod właśnie wpisaną literą miga kreska; pod ostatnią miga jeszcze chwilę i gaśnie */
+.tw {
+  position: relative;
+}
+
+.tw-char {
+  position: relative;
+  opacity: 0;
+  white-space: pre-wrap; /* spacje zachowane, ale tekst może się łamać */
+}
+
+.tw-char::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -0.15em;
+  height: max(1px, 0.08em);
+  background: currentColor;
+  opacity: 0;
+}
+
+.tw.is-on .tw-char {
+  animation: tw-in 0s linear calc(var(--i) * var(--tw-step)) forwards;
+}
+
+.tw.is-on .tw-char::after {
+  animation: tw-cursor var(--tw-step) steps(1) calc(var(--i) * var(--tw-step));
+}
+
+.tw.is-on .tw-char:last-child::after {
+  animation: tw-blink 0.5s steps(1) calc(var(--i) * var(--tw-step)) 4;
+}
+
+@keyframes tw-in {
+  to { opacity: 1; }
+}
+
+@keyframes tw-cursor {
+  0% { opacity: 1; }
+}
+
+@keyframes tw-blink {
+  0% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Przycisk-strzałka (components/common/ArrowButton.jsx) */
+.arrow-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 36px;
+  border-radius: var(--radius-btn);
+  color: var(--c-dark);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  pointer-events: auto;
+  transition: padding var(--dur-fast) var(--ease-out-expo), background var(--dur-fast) ease;
+}
+
+.arrow-btn--light { background: var(--c-white-60); }
+.arrow-btn--silver { background: var(--c-silver-60); }
+
+.arrow-btn:hover,
+.panel:hover .arrow-btn {
+  padding-left: 48px;
+}
+
+.arrow-btn:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+/* Cały kafel klikalny – niewidoczna warstwa nad nim (rodzic: position: relative) */
+.arrow-btn--stretch::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Kafel ze zdjęciem (components/common/Panel.jsx) */
+.panel {
+  position: relative;
+  overflow: hidden;
+  background: var(--c-stone);
+  color: var(--c-white);
+}
+
+.panel--full {
+  height: var(--full-h);
+}
+
+.panel--card {
+  aspect-ratio: 9 / 16;
+  border-radius: var(--radius-medium);
+}
+
+.panel__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+}
+
+/* Cień od dołu pod podpisem – biały tekst czytelny na każdym zdjęciu */
+.panel::after {
+  content: '';
+  position: absolute;
+  inset: 40% 0 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.45));
+  pointer-events: none;
+}
+
+/* Wejście zdjęcia: „prześwietlenie” i lekki zoom, jak na polymer.ws (keyframes zoom-expose) */
+.panel.is-in .panel__img {
+  opacity: 1;
+  animation: zoom-expose 0.9s var(--ease-out-expo) both;
+}
+
+@keyframes zoom-expose {
+  from {
+    filter: brightness(50) grayscale(1);
+    transform: scale(1.2);
+  }
+  to {
+    filter: brightness(1) grayscale(0);
+    transform: scale(1);
+  }
+}
+
+/* Pod ekranem ładowania nic się nie animuje – zdjęcia i pisanie startują, gdy ekran zniknie (utils/preloader.js) */
+html.is-loading .panel.is-in .panel__img {
+  opacity: 0;
+  animation: none;
+}
+
+html.is-loading .tw.is-on .tw-char,
+html.is-loading .tw.is-on .tw-char::after {
+  animation: none;
+}
+
+.panel__body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 12px;
+  height: 100%;
+  padding: 32px var(--container-pad);
+}
+
+.panel__body .arrow-btn {
+  position: static; /* warstwa ::after rozciąga się na cały .panel */
+}
+
+.panel__title {
+  max-width: 16em;
+}
+
+@media (min-width: 640px) {
+  .panel--card {
+    aspect-ratio: 16 / 9;
+  }
+
+  .panel--full .panel__body {
+    padding-block: 120px;
+  }
+
+  .panel--card .panel__body {
+    padding-block: 80px;
+  }
+
+  .panel--end .panel__body {
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+/* Szkielet ładowania (np. mapa, zanim Leaflet się doczyta) */
+.skeleton {
+  border-radius: var(--radius-medium);
+  background: linear-gradient(100deg, var(--c-silver) 40%, var(--c-bg) 50%, var(--c-silver) 60%) 0 0 / 200% 100%;
+  animation: skeleton 1.4s linear infinite;
+}
+
+@keyframes skeleton {
+  to { background-position: -200% 0; }
+}
+
+/* ---------- 7. Układ sekcji ---------- */
+.container {
+  width: 100%;
+  padding-inline: var(--container-pad);
+}
+
+/* Odstęp między blokami (u Polymera my-12 / my-25) */
+.block {
+  margin-block: 48px;
+  pointer-events: auto;
+}
+
+/* „Więcej” pod karuzelą (u Polymera „Shop more Products”) */
+.more-link {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.more-link__text {
+  color: var(--c-dark);
+  font-size: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .block {
+    margin-block: 100px;
+  }
+}
+
+/* ---------- 8. Pomocnicze ---------- */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  .tw-char { opacity: 1; }
+  .tw.is-on .tw-char,
+  .tw.is-on .tw-char::after { animation: none; }
+
+  .panel.is-in .panel__img { animation: none; }
+
+  html:not(.is-loading) .brand-logo path { animation: none; }
+
+  .skeleton { animation: none; }
+}

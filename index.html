@@ -9,11 +9,14 @@
     <meta name="keywords" content="bikepacking, cycling, bike touring, wild camping, Europe cycling trips, Balkans by bike, BLaMaZ" />
     <meta name="author" content="BLaMaZ" />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#e8e5e0" />
+    <meta name="theme-color" content="#f0f0f0" />
     <link rel="canonical" href="https://restdayblamage.github.io/BLAMAZ/" />
 
-    <link rel="icon" type="image/png" href="/blmzlogo.png" />
-    <link rel="apple-touch-icon" href="/blmzlogo.png" />
+    <!-- Favicon: litera „b” z logo (kontur) na ciemnoszarym kwadracie -->
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/icons/favicon-48.png" />
+    <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -21,7 +24,7 @@
     <meta property="og:title" content="BLaMaZ – Bikepacking, Wild Camps &amp; Euro Cycling Trips" />
     <meta property="og:description" content="Sometimes it's smooth, sometimes it's a BLaMaZ. Wild camps and cycling trips across Europe." />
     <meta property="og:url" content="https://restdayblamage.github.io/BLAMAZ/" />
-    <meta property="og:image" content="https://restdayblamage.github.io/BLAMAZ/trips.jpg" />
+    <meta property="og:image" content="https://restdayblamage.github.io/BLAMAZ/og-image.jpg" />
     <meta property="og:image:alt" content="BLaMaZ bikepacking trip across Europe" />
     <meta property="og:locale" content="en_US" />
 
@@ -29,7 +32,7 @@
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="BLaMaZ – Bikepacking, Wild Camps &amp; Euro Cycling Trips" />
     <meta name="twitter:description" content="Sometimes it's smooth, sometimes it's a BLaMaZ. Wild camps and cycling trips across Europe." />
-    <meta name="twitter:image" content="https://restdayblamage.github.io/BLAMAZ/trips.jpg" />
+    <meta name="twitter:image" content="https://restdayblamage.github.io/BLAMAZ/og-image.jpg" />
 
     <script type="application/ld+json">
       {
@@ -41,12 +44,32 @@
         "publisher": {
           "@type": "Organization",
           "name": "BLaMaZ",
-          "logo": "https://restdayblamage.github.io/BLAMAZ/blmzlogo.png"
+          "logo": "https://restdayblamage.github.io/BLAMAZ/icons/icon-512.png"
         }
       }
     </script>
+    <!-- Ekran ładowania jak na polymer.ws: jasnoszare tło z bladym znakiem logo → tło przechodzi w ciepłą szarość
+         (kolor spod zdjęć w hero), znak gaśnie → ekran znika, a zdjęcia „prześwietlają się” i startuje pisanie tekstów.
+         Klasa is-loading dodawana skryptem, więc bez JavaScriptu ekran się nie pokaże. Kolory wpisane na sztywno
+         (tokeny z global.css jeszcze nie działają) – lustro --c-bg i --c-stone. Sterowanie: src/utils/preloader.js -->
+    <script>document.documentElement.classList.add('is-loading')</script>
+    <style>
+      html.is-loading, html.is-loading body { overflow: hidden; }
+      #preloader { display: none; }
+      html.is-loading #preloader, #preloader.is-done { display: grid; place-items: center; position: fixed; inset: 0; z-index: 100000; }
+      #preloader { background: #f0f0f0; transition: background-color 0.5s ease, opacity 0.4s ease; }
+      .pl-logo { width: min(40vw, 220px); height: auto; filter: brightness(0); opacity: 0.07; transition: opacity 0.5s ease; }
+      .pl-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+      #preloader.is-done { background: #9b9793; pointer-events: none; }
+      #preloader.is-done .pl-logo { opacity: 0; }
+      #preloader.is-out { opacity: 0; }
+    </style>
   </head>
   <body>
+    <div id="preloader" role="status" aria-live="polite">
+      <img class="pl-logo" src="/icons/logo-wordmark.webp" alt="" width="1258" height="240" />
+      <span class="pl-sr">Loading BLaMaZ…</span>
+    </div>
     <div id="root"></div>
     <noscript>
       <h1>BLaMaZ – Bikepacking, Wild Camps &amp; Euro Cycling Trips</h1>

@@ -1,0 +1,39 @@
+/* Trzy kolumny historii pod kartą „O nas” – wyśrodkowane, szary tytuł, mała miniatura, tekst „z maszyny” */
+.story {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  padding-block: var(--spacer-small);
+}
+
+.story__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  text-align: center;
+}
+
+.story__title {
+  max-width: 14em;
+  color: var(--c-grey-02);
+}
+
+.story__img {
+  width: 96px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: var(--radius-small);
+}
+
+.story__text {
+  max-width: 30ch;
+  color: var(--c-dark);
+}
+
+@media (min-width: 640px) {
+  .story {
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(32px, 6vw, 128px);
+  }
+}

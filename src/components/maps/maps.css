@@ -1,0 +1,579 @@
+/* Mapy: wspólny wygląd obu map (Leaflet) + karty-filtry noclegów, w stylu polymer.ws:
+   bez obwódek, zaokrąglona karta, półprzezroczyste szare przyciski z rozmyciem, etykiety Space Mono wielkimi literami.
+   Ładowane razem z mapami (import w mapKit.js), korzystają z tokenów global.css. */
+
+.map-block {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.map-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-medium);
+  background: var(--c-silver);
+  isolation: isolate;
+}
+
+/* Telefon: stała wysokość (układ „sztywny”); komputer: karta 16:9 jak kafelki ze zdjęciami */
+.map-canvas {
+  width: 100%;
+  height: 520px;
+}
+
+@media (min-width: 768px) {
+  .map-canvas {
+    height: auto;
+    aspect-ratio: 16 / 9;
+    max-height: 860px;
+  }
+}
+
+/* Podkład „Minimal” i „Dark” w pełni szary – kolor mają tylko trasy i wyróżnione noclegi */
+.map-block[data-basemap="minimal"] .leaflet-tile-pane,
+.map-block[data-basemap="dark"] .leaflet-tile-pane {
+  filter: grayscale(1);
+}
+
+.map-block[data-basemap="dark"] .map-card,
+.map-block[data-basemap="dark"] .leaflet-container {
+  background: #262626;
+}
+
+/* ---------- Tytuł nałożony na mapę (jak podpis na kafelku ze zdjęciem) ---------- */
+/* Tytuł + mapa: tytuł ustawiany względem samej mapy (bez kart pod nią) */
+.map-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.map-head {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--c-dark);
+}
+
+.map-head__label {
+  color: var(--c-grey-02);
+}
+
+.map-head__title {
+  max-width: 14em;
+}
+
+@media (min-width: 768px) {
+  .map-head {
+    position: absolute;
+    left: 40px;
+    bottom: 40px;
+    z-index: 600; /* nad kafelkami i trasami Leafleta, pod jego przyciskami */
+    max-width: calc(100% - 160px);
+    pointer-events: none;
+  }
+
+  .map-head .map-filters {
+    pointer-events: auto;
+    margin-top: 12px;
+  }
+
+  /* Na ciemnym podkładzie tytuł biały */
+  .map-block[data-basemap="dark"] .map-head,
+  .map-block[data-basemap="satellite"] .map-head {
+    color: var(--c-white);
+  }
+
+  .map-block[data-basemap="dark"] .map-head__label,
+  .map-block[data-basemap="satellite"] .map-head__label {
+    color: var(--c-silver);
+  }
+
+  /* Pigułki na mapie – półprzezroczyste z rozmyciem, jak przycisk-strzałka */
+  .map-head .map-chip:not(.is-active) {
+    background: var(--c-white-60);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  .map-head .map-chip:not(.is-active):hover {
+    background: var(--c-white);
+  }
+}
+
+.map-card .leaflet-container {
+  font-family: var(--font-sans);
+  background: var(--c-silver);
+}
+
+/* Etykieta „z maszyny” – wspólna dla przycisków, dymków i atrybucji */
+.map-loading,
+.map-chip,
+.map-pop__tag,
+.map-pop__coords,
+.map-pop__link,
+.map-layers__option,
+.stat-action,
+.stat-label,
+.leaflet-tooltip.map-tip {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.map-loading {
+  position: absolute;
+  inset: auto 50% 24px auto;
+  transform: translateX(50%);
+  z-index: 500;
+  padding: 10px 16px;
+  border-radius: var(--radius-btn);
+  background: var(--c-white-60);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--c-dark);
+}
+
+/* ---------- Kontrolki (zoom, „pokaż wszystko”, pełny ekran, podkład) – jak przycisk-strzałka ---------- */
+.map-card .leaflet-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: none !important;
+  background: transparent;
+  box-shadow: none !important;
+}
+
+.map-card .leaflet-bar a,
+.map-card .leaflet-bar a:first-child,
+.map-card .leaflet-bar a:last-child,
+.map-layers__toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 36px;
+  border: none !important;
+  border-radius: var(--radius-btn) !important;
+  background: var(--c-white-60);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--c-dark);
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 36px;
+  transition: background var(--dur-fast) ease;
+}
+
+.map-card .leaflet-bar a:hover,
+.map-layers__toggle:hover,
+.map-layers.is-open .map-layers__toggle {
+  background: var(--c-white);
+  color: var(--c-dark);
+}
+
+.map-card .leaflet-bar a.leaflet-disabled {
+  opacity: 0.4;
+  background: var(--c-white-60);
+}
+
+.map-btn svg,
+.map-layers__toggle svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.map-card .leaflet-bottom.leaflet-right .leaflet-control {
+  margin: 0 16px 16px 0;
+}
+
+.map-card .leaflet-control-attribution {
+  margin: 0 !important;
+  padding: 2px 10px;
+  background: var(--c-white-60);
+  color: var(--c-grey-02);
+  font-family: var(--font-mono);
+  font-size: 9px;
+}
+
+.map-card .leaflet-control-attribution a {
+  color: var(--c-dark);
+}
+
+/* ---------- Znaczniki noclegów: płaskie, bez obwódek (styl polymer.ws) – te same kropki co na kartach ---------- */
+.map-pin span {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  transition: transform 0.15s ease;
+}
+
+.map-pin:hover span { transform: scale(1.6); }
+
+.map-pin--wild span { background: var(--c-dark); }
+.map-pin--camp span { background: var(--c-bg); box-shadow: inset 0 0 0 2px var(--c-dark); }
+.map-pin--memorable span { background: var(--c-accent); }
+
+/* Wyróżniony nocleg: pomarańczowy pierścień rozchodzący się jak sygnał */
+.map-pin--memorable::after {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--c-accent);
+  animation: pin-pulse 2s ease-out infinite;
+}
+
+@keyframes pin-pulse {
+  from { transform: scale(0.6); opacity: 1; }
+  to { transform: scale(1.9); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-pin--memorable::after { animation: none; }
+}
+
+/* ---------- Dymki: podpowiedź po najechaniu i popup po kliknięciu ---------- */
+.leaflet-tooltip.map-tip {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: var(--radius-small);
+  background: var(--c-dark);
+  color: var(--c-white);
+  box-shadow: none;
+}
+
+.leaflet-tooltip.map-tip span {
+  opacity: 0.7;
+}
+
+.leaflet-tooltip-top.map-tip::before { border-top-color: var(--c-dark); }
+
+/* Podpis mety wskazanej trasy – etykieta jak na rysunku technicznym, bez strzałki */
+.leaflet-tooltip.map-tip--label {
+  padding: 6px 10px;
+  background: var(--c-accent);
+  color: var(--c-ink);
+  font-size: 0.6875rem;
+}
+
+.leaflet-tooltip.map-tip--label::before {
+  display: none;
+}
+
+.map-popup .leaflet-popup-content-wrapper {
+  border-radius: var(--radius-medium);
+  background: var(--c-bg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.map-popup .leaflet-popup-tip {
+  background: var(--c-bg);
+}
+
+.map-popup .leaflet-popup-content {
+  margin: 20px 24px;
+}
+
+.map-pop {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: var(--font-sans);
+  color: var(--c-dark);
+}
+
+.map-pop__tag {
+  padding: 4px 10px;
+  border-radius: var(--radius-btn);
+  background: var(--c-silver-60);
+  font-size: 0.6875rem;
+}
+
+.map-pop__tag--wild { background: var(--c-dark); color: var(--c-white); }
+.map-pop__tag--memorable { background: var(--c-accent); color: var(--c-ink); }
+
+.map-pop__name {
+  font-family: var(--font-sans);
+  font-size: 1.375rem;
+  font-weight: 400;
+  line-height: 1.1;
+}
+
+.map-pop__coords {
+  font-size: 0.6875rem;
+  color: var(--c-grey-02);
+}
+
+.map-pop__link {
+  font-size: 0.6875rem;
+  color: var(--c-dark) !important;
+  text-decoration: underline;
+  text-decoration-color: var(--c-grey-02);
+  text-underline-offset: 3px;
+}
+
+/* ---------- Filtry wypraw nad mapą (jednocześnie legenda tras) ---------- */
+.map-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.map-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-btn);
+  background: var(--c-silver-60);
+  color: var(--c-dark);
+  cursor: pointer;
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+
+.map-chip:hover { background: var(--c-silver); }
+
+.map-chip.is-active {
+  background: var(--c-dark);
+  color: var(--c-white);
+}
+
+.map-chip:focus-visible,
+.stat--toggle:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.map-chip__swatch {
+  flex: none;
+}
+
+.map-chip__meta { opacity: 0.6; }
+
+@media (max-width: 767px) {
+  .map-chip__title { display: none; }
+
+  /* Telefon: jeden przewijany poziomo pasek zamiast kilku wierszy */
+  .map-filters {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    margin: 0 calc(var(--container-pad) * -1);
+    padding: 0 var(--container-pad);
+    scroll-padding-inline: var(--container-pad);
+    scroll-snap-type: x proximity;
+  }
+
+  .map-chip {
+    flex: none;
+    scroll-snap-align: start;
+  }
+}
+
+/* ---------- Karty noclegów pod mapą – legenda i filtr jednocześnie (styl polymer.ws) ----------
+   Bez pudełek: cienka linia u góry, etykieta „z maszyny”, duża liczba, opis szarym; stan jako pigułka */
+.stats {
+  display: grid;
+  gap: 32px;
+  margin-top: 16px;
+}
+
+@media (min-width: 768px) {
+  .stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+  }
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--c-silver);
+}
+
+.stat--toggle {
+  color: var(--c-dark);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: opacity var(--dur-fast) ease, border-color var(--dur-fast) ease;
+}
+
+.stat--toggle:hover { border-top-color: var(--c-dark); }
+.stat--toggle.is-off .stat-number,
+.stat--toggle.is-off .stat-text,
+.stat--toggle.is-off .stat-dot { opacity: 0.35; }
+
+.stat-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.stat-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--c-dark);
+}
+
+/* Stan filtra jak przycisk-strzałka: szara pigułka, „Shown” ciemna */
+.stat-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 76px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: var(--radius-btn);
+  background: var(--c-silver-60);
+  color: var(--c-dark);
+  font-size: 0.6875rem;
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease, padding var(--dur-fast) var(--ease-out-expo);
+}
+
+.stat--toggle.is-on .stat-action { background: var(--c-dark); color: var(--c-white); }
+
+.stat-action--arrow {
+  min-width: 76px;
+}
+
+.stat--toggle:hover .stat-action--arrow {
+  padding-left: 36px;
+}
+
+.stat--toggle.is-on .stat-action--arrow {
+  background: var(--c-silver-60);
+  color: var(--c-dark);
+}
+
+.stat-number {
+  font-family: var(--font-sans);
+  font-size: clamp(3.5rem, 7vw, 6.5rem);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--c-dark);
+  transition: opacity var(--dur-fast) ease;
+}
+
+.stat-text {
+  max-width: 30ch;
+  color: var(--c-grey-02);
+  font-size: 1rem;
+  line-height: 1.45;
+  transition: opacity var(--dur-fast) ease;
+}
+
+.stat-text b {
+  color: var(--c-dark);
+  font-weight: 400;
+}
+
+.stat-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: var(--radius-pill);
+}
+
+.stat-dot--wild { background: var(--c-dark); }
+.stat-dot--camp { box-shadow: inset 0 0 0 2px var(--c-dark); }
+.stat-dot--memorable { background: var(--c-accent); }
+
+/* ---------- Pełny ekran: natywny (:fullscreen) lub „na całe okno” (.is-fullscreen, np. iPhone) ---------- */
+.map-card:fullscreen,
+.map-card.is-fullscreen {
+  border-radius: 0;
+}
+
+.map-card.is-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+}
+
+.map-card:fullscreen .map-canvas,
+.map-card.is-fullscreen .map-canvas {
+  height: 100%;
+}
+
+.map-card:-webkit-full-screen .map-canvas {
+  height: 100%;
+}
+
+/* ---------- Przełącznik podkładu (prawy górny róg) ---------- */
+.map-card .map-layers {
+  margin: 16px 16px 0 0;
+}
+
+.map-layers__panel {
+  position: absolute;
+  top: 44px;
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(2, 72px);
+  gap: 8px;
+  padding: 10px;
+  border-radius: var(--radius-medium);
+  background: var(--c-white-60);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.map-layers__panel[hidden] {
+  display: none;
+}
+
+.map-layers__option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border-radius: var(--radius-small);
+  color: var(--c-dark);
+  font-size: 0.625rem;
+  transition: background var(--dur-fast) ease;
+}
+
+.map-layers__option:hover {
+  background: var(--c-white-60);
+}
+
+.map-layers__option img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: var(--radius-small);
+  background: var(--c-silver);
+}
+
+.map-layers__option.is-active img {
+  box-shadow: 0 0 0 2px var(--c-dark);
+}
+
+.map-layers__toggle:focus-visible,
+.map-layers__option:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}

@@ -1,0 +1,272 @@
+/* Menu (StaggeredMenu): pasek z logo i przyciskiem + wysuwany panel z warstwami w kolorach marki.
+   Kolory warstw i akcent przychodzą z Header.jsx (tokens.js), reszta z tokenów global.css. */
+
+.staggered-menu-wrapper {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.staggered-menu-wrapper.fixed-wrapper {
+  position: fixed;
+  overflow: hidden;
+}
+
+/* ---------- Pasek: logo + przycisk ---------- */
+.staggered-menu-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 22px var(--gutter);
+  pointer-events: none;
+}
+
+.staggered-menu-header > * {
+  pointer-events: auto;
+}
+
+.sm-logo {
+  display: flex;
+  align-items: center;
+  user-select: none;
+}
+
+/* Logo jest białym konturem – brightness(0) robi z niego ciemne na jasnym tle */
+.sm-logo-img {
+  display: block;
+  width: auto;
+  height: 24px;
+  object-fit: contain;
+  filter: brightness(0);
+}
+
+.sm-toggle {
+  position: relative;
+  margin-left: auto; /* przycisk zawsze po prawej, także bez logo */
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: var(--radius-btn);
+  background: var(--c-white-60);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  color: var(--c-dark);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+  overflow: visible;
+  transition: background var(--dur-fast) ease;
+}
+
+/* Akcent: zielony przycisk po najechaniu; kolor tekstu nadpisuje ten ustawiany przez GSAP */
+.sm-toggle:hover {
+  background: var(--c-silver);
+  color: var(--c-dark) !important;
+}
+
+.sm-toggle:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 4px;
+}
+
+.sm-toggle-textWrap {
+  position: relative;
+  display: inline-block;
+  width: var(--sm-toggle-width, auto);
+  min-width: var(--sm-toggle-width, auto);
+  height: 1em;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sm-toggle-textInner {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.sm-toggle-line {
+  display: block;
+  height: 1em;
+  line-height: 1;
+}
+
+.sm-line {
+  display: none !important;
+}
+
+.sm-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 14px;
+  width: 14px;
+  height: 14px;
+  will-change: transform;
+}
+
+.sm-icon-line {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+
+/* ---------- Panel ---------- */
+.staggered-menu-panel,
+.sm-prelayers {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: clamp(260px, 38vw, 420px);
+  height: 100%;
+}
+
+.staggered-menu-panel {
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  padding: 6em 2em 2em;
+  overflow-y: auto;
+  background: var(--c-grey-10);
+  pointer-events: auto;
+}
+
+.sm-prelayers {
+  z-index: 5;
+  pointer-events: none;
+}
+
+[data-position='left'] .staggered-menu-panel,
+[data-position='left'] .sm-prelayers {
+  right: auto;
+  left: 0;
+}
+
+.sm-prelayer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.sm-panel-inner {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sm-panel-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sm-panel-itemWrap {
+  position: relative;
+  overflow: hidden;
+  line-height: 1;
+}
+
+.sm-panel-item {
+  position: relative;
+  display: inline-block;
+  padding-right: 1.4em;
+  color: var(--c-dark);
+  font-family: var(--font-sans);
+  font-size: 3rem;
+  font-weight: 400;
+  line-height: 1;
+  transition: color var(--dur-fast) ease;
+}
+
+.sm-panel-item:hover {
+  color: var(--sm-accent);
+}
+
+.sm-panel-itemLabel {
+  display: inline-block;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+/* ---------- Linki społecznościowe w panelu ---------- */
+.sm-socials {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 2rem;
+}
+
+.sm-socials-title {
+  color: var(--sm-accent);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.sm-socials-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.sm-socials-link {
+  position: relative;
+  display: inline-block;
+  padding: 2px 0;
+  color: var(--c-ink);
+  font-family: var(--font-sans);
+  font-size: 1.2rem;
+  font-weight: 500;
+  transition: color var(--dur-fast) ease, opacity var(--dur-fast) ease;
+}
+
+/* Najechanie jednego linku przygasza pozostałe */
+.sm-socials-list:hover .sm-socials-link:not(:hover),
+.sm-socials-list:focus-within .sm-socials-link:not(:focus-visible) {
+  opacity: 0.35;
+}
+
+.sm-socials-link:hover {
+  color: var(--sm-accent);
+}
+
+.sm-socials-link:focus-visible {
+  outline: 2px solid var(--sm-accent);
+  outline-offset: 3px;
+}
+
+/* ---------- Tablet i telefon: panel na całą szerokość ---------- */
+@media (max-width: 1024px) {
+  .staggered-menu-panel,
+  .sm-prelayers {
+    right: 0;
+    left: 0;
+    width: 100%;
+  }
+}

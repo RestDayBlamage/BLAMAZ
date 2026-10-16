@@ -1,0 +1,62 @@
+/* Hero: dwa zdjęcia obok siebie na całą wysokość ekranu (Panel variant="full" w środku) */
+.hero {
+  display: flex;
+  flex-direction: column;
+  height: var(--full-h);
+  background: var(--c-stone);
+}
+
+.hero > .panel-wrap {
+  flex: 1 1 0;
+  min-height: 0;
+  transition: flex-grow var(--dur-slow) var(--ease-out-expo);
+}
+
+.hero .panel--full {
+  height: 100%;
+}
+
+/* Warstwa rozmycia nad zdjęciem, pod podpisem – tekst zostaje ostry (u Polymera: div.blur z opacity) */
+.hero .panel::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out-expo);
+  pointer-events: none;
+}
+
+/* Telefon: dwa zdjęcia jedno pod drugim, każde o stałej wysokości */
+@media (max-width: 639px) {
+  .hero {
+    height: auto;
+  }
+
+  .hero > .panel-wrap {
+    flex: none;
+  }
+
+  .hero .panel--full {
+    height: 420px;
+  }
+}
+
+@media (min-width: 640px) {
+  .hero {
+    flex-direction: row;
+  }
+}
+
+@media (hover: hover) and (min-width: 640px) {
+  /* Najechana połówka rośnie, druga się zwęża i rozmywa (jak na polymer.ws) */
+  .hero > .panel-wrap:hover {
+    flex-grow: 1.3;
+  }
+
+  .hero:has(.panel-wrap:hover) > .panel-wrap:not(:hover) .panel::before {
+    opacity: 1;
+  }
+}

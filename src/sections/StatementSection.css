@@ -1,0 +1,33 @@
+.statement {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: var(--full-h);
+  overflow: hidden;
+  background: var(--c-stone);
+  color: var(--c-white);
+}
+
+.statement__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(0.6); /* przyciemnienie pod białym tekstem */
+}
+
+.statement__body {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 0 var(--gutter);
+  text-align: center;
+}
+
+.statement__text {
+  max-width: 14em;
+  margin-bottom: 64px;
+}

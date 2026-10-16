@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Surowe pliki GPX ze Stravy (czas, tętno) – nie publikujemy, na stronie są wersje uproszczone w public/data
+gpx-src
+# Oryginalne zdjęcia i wideo (pełna rozdzielczość) – na stronie są wersje obrobione w public/media i src/assets
+media-src

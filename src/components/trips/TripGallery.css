@@ -1,0 +1,260 @@
+/* Galeria wypraw: filtry-flagi, karuzela kart (wzór: lista produktów na polymer.ws) i okno szczegółów. Tylko tokeny z global.css. */
+
+.trip-gallery {
+  margin-top: var(--spacer-small);
+}
+
+.trip-gallery__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* ---------- Filtry ---------- */
+.trip-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.trip-filter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 52px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-btn);
+  background: var(--c-silver-60);
+  color: var(--c-dark);
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+
+.trip-filter:hover {
+  background: var(--c-silver);
+}
+
+.trip-filter.is-active {
+  background: var(--c-dark);
+  color: var(--c-white);
+}
+
+.trip-filter:focus-visible,
+.trip-card:focus-visible,
+.trip-arrow:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.trip-flag {
+  display: inline-block;
+  object-fit: cover;
+  border-radius: var(--radius-pill);
+}
+
+/* ---------- Strzałki karuzeli ---------- */
+.trip-arrows {
+  display: flex;
+  gap: 12px;
+  margin-left: auto;
+  color: var(--c-dark);
+}
+
+.trip-arrow {
+  width: 36px;
+  height: 36px;
+  font-size: 1.25rem;
+  line-height: 1;
+  transition: transform var(--dur-fast) ease;
+}
+
+.trip-arrow:hover {
+  transform: scale(1.15);
+}
+
+/* ---------- Karuzela ---------- */
+.trip-rail {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  cursor: grab;
+  user-select: none;
+  scroll-snap-type: x proximity;
+  scroll-padding-inline: var(--container-pad); /* przyciąganie do krawędzi treści, nie ekranu */
+}
+
+.trip-rail:active {
+  cursor: grabbing;
+}
+
+.trip-slide {
+  flex: 0 0 85%;
+  scroll-snap-align: start;
+}
+
+@media (min-width: 640px) {
+  .trip-slide {
+    flex-basis: calc((100% - 40px) / 3);
+  }
+}
+
+.trip-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  text-align: left;
+  cursor: inherit;
+}
+
+.trip-card__photo {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: var(--radius-medium);
+  background: var(--c-silver);
+  transition: filter var(--dur-slow) var(--ease-out-expo);
+}
+
+/* Wyprawa bez zdjęcia – szare tło z rokiem */
+.trip-card__photo--empty {
+  display: grid;
+  place-items: center;
+  background: var(--c-stone);
+  color: var(--c-white);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+}
+
+.trip-card:hover .trip-card__photo {
+  filter: brightness(1.08);
+}
+
+.trip-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 0 0;
+}
+
+.trip-card__title,
+.trip-modal__title {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.trip-card__title {
+  font-size: 1.375rem;
+  color: var(--c-dark);
+}
+
+/* Rok w kolorze trasy + linia */
+.trip-year {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--c-dark);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+}
+
+
+.trip-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.trip-flags__item {
+  display: inline-flex;
+}
+
+/* ---------- Okno szczegółów ---------- */
+.trip-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--c-overlay);
+  animation: trip-fade 0.3s ease;
+}
+
+.trip-modal__dialog {
+  position: relative;
+  width: 90%;
+  max-width: 720px;
+  max-height: 85%;
+  padding: 40px;
+  overflow-y: auto;
+  border-radius: var(--radius-medium);
+  background: var(--c-bg);
+  animation: trip-scale 0.3s ease;
+}
+
+.trip-modal__title {
+  margin-bottom: 8px;
+  padding-right: 48px;
+  font-size: 2rem;
+}
+
+.trip-modal__photo {
+  width: 100%;
+  height: 320px;
+  margin: 20px 0;
+  object-fit: cover;
+  border-radius: var(--radius-medium);
+}
+
+.trip-modal__close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-pill);
+  background: var(--c-silver-60);
+  font-size: 1.4rem;
+  line-height: 1;
+  transition: background var(--dur-fast) ease, color var(--dur-fast) ease;
+}
+
+.trip-modal__close:hover {
+  background: var(--c-dark);
+  color: var(--c-white);
+}
+
+.trip-stats {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 16px;
+  line-height: 1.6;
+}
+
+.trip-stats dt {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--c-grey-02);
+}
+
+@keyframes trip-fade {
+  from { opacity: 0; }
+}
+
+@keyframes trip-scale {
+  from { transform: scale(0.95); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trip-modal,
+  .trip-modal__dialog { animation: none; }
+}
