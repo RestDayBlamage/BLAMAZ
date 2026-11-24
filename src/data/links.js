@@ -9,11 +9,11 @@ export const SOCIALS = [
 ];
 
 // Sekcje strony w menu. Bez osobnych ariaLabel – czytnik ekranu czyta widoczny tekst (WCAG 2.5.3).
-// „Email” usunięty: „Contact” prowadzi do bloku kontaktu w stopce z widocznym adresem.
 export const NAV = [
   { label: "Home", link: "#home" },
   { label: "About", link: "#aboutus" },
   { label: "Camps", link: "#camps" },
   { label: "Trips", link: "#trips" },
   { label: "Contact", link: "#contact" },
+  { label: "Email", link: `mailto:${EMAIL}` },
 ];
