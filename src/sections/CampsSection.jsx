@@ -1,7 +1,7 @@
 import { lazy } from "react";
 import Panel from "../components/common/Panel";
 import LazyMount from "../components/common/LazyMount";
-import camp from "../assets/images/about-camp.webp";
+import { PHOTOS } from "../data/photos";
 import { isMobile } from "../utils/device";
 
 // Leaflet ładuje się dopiero przy przewinięciu w pobliże mapy
@@ -14,7 +14,7 @@ export default function CampsSection() {
       <Panel
         id="camps"
         variant="full"
-        image={camp}
+        image={PHOTOS.camp}
         alt="Tents and loaded bikes at a wild camp in the hills"
         title="Wild camps"
         tagline="Our overnight spots across Europe"

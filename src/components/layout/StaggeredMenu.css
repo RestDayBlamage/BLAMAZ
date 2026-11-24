@@ -55,8 +55,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
-  height: 36px;
-  padding: 0 16px;
+  height: 44px; /* minimalny cel dotyku na telefonie */
+  padding: 0 18px;
   border-radius: var(--radius-btn);
   background: var(--c-white-60);
   -webkit-backdrop-filter: blur(10px);
@@ -202,7 +202,8 @@
   transition: color var(--dur-fast) ease;
 }
 
-.sm-panel-item:hover {
+.sm-panel-item:hover,
+.sm-panel-item:focus-visible {
   color: var(--sm-accent);
 }
 
@@ -237,8 +238,9 @@
 
 .sm-socials-link {
   position: relative;
-  display: inline-block;
-  padding: 2px 0;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px; /* minimalny cel dotyku na telefonie */
   color: var(--c-ink);
   font-family: var(--font-sans);
   font-size: 1.2rem;

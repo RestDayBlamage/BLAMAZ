@@ -1,5 +1,5 @@
 import Panel from "../components/common/Panel";
-import mural from "../assets/images/about-mural.webp";
+import { PHOTOS } from "../data/photos";
 import { SOCIALS } from "../data/links";
 
 const instagram = SOCIALS.find((s) => s.id === "instagram");
@@ -8,7 +8,7 @@ const instagram = SOCIALS.find((s) => s.id === "instagram");
 export default function InstagramSection() {
   return (
     <Panel
-      image={mural}
+      image={PHOTOS.mural}
       alt="BLaMaZ cyclist with a loaded bike in front of a colourful mural"
       title="Sometimes it’s smooth, sometimes it’s a BLaMaZ"
       tagline="Follow the ride on Instagram"

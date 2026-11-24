@@ -30,7 +30,7 @@
   /* Szarości z polymer.ws */
   --c-bg: #f0f0f0;
   --c-dark: #444444;
-  --c-grey-02: #858c8f;
+  --c-grey-02: #676d70; /* tekst drugorzędny – kontrast 4.6:1 na --c-bg (było #858c8f, 3.0:1 – za mało) */
   --c-silver: #d0d0d0;
   --c-silver-60: hsla(0, 0%, 82%, 0.6);
   --c-white-60: hsla(0, 0%, 100%, 0.6);
@@ -193,6 +193,14 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Wspólny pierścień fokusu z klawiatury dla wszystkich linków i przycisków, które nie mają własnego
+   (stopka, pozycje menu, linki w treści). Komponenty z własnym :focus-visible nadpisują go niżej. */
+a:focus-visible,
+button:focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 3px;
+}
+
 /* Warstwa menu nad stroną; klikalne są tylko jej elementy (pointer-events w StaggeredMenu.css) */
 .site-header {
   position: fixed;
@@ -221,7 +229,31 @@ body {
   color: var(--c-dark);
   transform: translateX(-50%);
   pointer-events: auto;
-  transition: color var(--dur-fast) ease;
+  transition:
+    color var(--dur-fast) ease,
+    opacity var(--dur-fast) var(--ease-out-expo),
+    translate var(--dur-fast) var(--ease-out-expo),
+    visibility 0s;
+}
+
+/* Strefa kliknięcia co najmniej 44 px wysokości – samo logo ma ~18–30 px */
+.brand-logo::after {
+  content: '';
+  position: absolute;
+  inset: -14px -8px;
+}
+
+/* Poza hero logo odjeżdża w górę i znika (BrandLogo.jsx), żeby nie zasłaniać treści sekcji */
+.brand-logo--hidden {
+  opacity: 0;
+  translate: 0 -12px;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    color var(--dur-fast) ease,
+    opacity var(--dur-fast) var(--ease-out-expo),
+    translate var(--dur-fast) var(--ease-out-expo),
+    visibility 0s var(--dur-fast);
 }
 
 /* Białe nad zdjęciami – lekki cień, żeby nie ginęło na jasnym niebie */
@@ -369,23 +401,43 @@ html:not(.is-loading) .brand-logo path {
 .arrow-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 100px;
-  height: 36px;
+  gap: 12px;
+  height: 44px; /* minimalny cel dotyku na telefonie */
+  padding: 0 18px;
   border-radius: var(--radius-btn);
   color: var(--c-dark);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
   -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
   pointer-events: auto;
-  transition: padding var(--dur-fast) var(--ease-out-expo), background var(--dur-fast) ease;
+  transition: gap var(--dur-fast) var(--ease-out-expo), background var(--dur-fast) ease;
+}
+
+.arrow-btn__icon {
+  flex: none;
+}
+
+/* Link na zewnątrz: strzałka skośna ↗ */
+.arrow-btn--external .arrow-btn__icon {
+  rotate: -45deg;
 }
 
 .arrow-btn--light { background: var(--c-white-60); }
 .arrow-btn--silver { background: var(--c-silver-60); }
+/* Kontakt (mailto) – jedyny przycisk w kolorze akcentu; tekst na akcencie zawsze ciemny (--c-ink) */
+.arrow-btn--accent {
+  background: var(--c-accent);
+  color: var(--c-ink);
+}
 
 .arrow-btn:hover,
 .panel:hover .arrow-btn {
-  padding-left: 48px;
+  gap: 24px;
 }
 
 .arrow-btn:focus-visible {

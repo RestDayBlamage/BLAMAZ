@@ -7,6 +7,7 @@ import { LOGO_LETTERS, LOGO_VIEWBOX } from "./logoPaths";
 export default function BrandLogo() {
   const ref = useRef(null);
   const [light, setLight] = useState(true);
+  const [hidden, setHidden] = useState(false);
 
   useEffect(() => {
     let frame = 0;
@@ -22,6 +23,10 @@ export default function BrandLogo() {
         return b.top <= y && b.bottom >= y && b.left <= x && b.right >= x;
       });
       setLight(under);
+      // Logo jest tylko nad hero: dalej zasłaniało nagłówki sekcji, etykiety map i filtry.
+      // Chowa się, gdy połowa hero zniknie z ekranu, i wraca po przewinięciu do góry.
+      const hero = document.getElementById("home");
+      setHidden(hero ? hero.getBoundingClientRect().bottom < window.innerHeight * 0.5 : false);
     };
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -37,7 +42,7 @@ export default function BrandLogo() {
   }, []);
 
   return (
-    <a ref={ref} className={`brand-logo ${light ? "brand-logo--light" : ""}`} href="#home" aria-label="BLaMaZ – home">
+    <a ref={ref} className={`brand-logo ${light ? "brand-logo--light" : ""} ${hidden ? "brand-logo--hidden" : ""}`} href="#home" aria-label="BLaMaZ – home">
       <svg viewBox={LOGO_VIEWBOX} aria-hidden="true">
         {LOGO_LETTERS.map((d, i) => (
           <path key={i} d={d} pathLength="100" style={{ "--i": i }} />

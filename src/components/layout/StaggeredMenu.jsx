@@ -2,6 +2,10 @@ import React, { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import './StaggeredMenu.css';
 
+// Sprawdzane przy każdym otwarciu/zamknięciu – reaguje na zmianę ustawienia bez przeładowania strony
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 export const StaggeredMenu = ({
   position = 'right',
   colors = ['#B19EEF', '#5227FF'],
@@ -187,7 +191,9 @@ export const StaggeredMenu = ({
       tl.eventCallback('onComplete', () => {
         busyRef.current = false;
       });
-      tl.play(0);
+      // Ograniczony ruch w systemie: menu pojawia się od razu, bez wjazdu warstw i schodkowania pozycji
+      if (prefersReducedMotion()) tl.progress(1);
+      else tl.play(0);
     } else {
       busyRef.current = false;
     }
@@ -226,6 +232,7 @@ export const StaggeredMenu = ({
         busyRef.current = false;
       }
     });
+    if (prefersReducedMotion()) closeTweenRef.current.progress(1);
   }, [position]);
 
   const animateIcon = useCallback(opening => {
@@ -346,6 +353,22 @@ export const StaggeredMenu = ({
     };
   }, [closeOnClickAway, open, closeMenu]);
 
+  // Klawiatura: po otwarciu fokus na pierwszą pozycję, Esc zamyka menu i oddaje fokus przyciskowi MENU
+  React.useEffect(() => {
+    if (!open) return;
+    const first = panelRef.current?.querySelector('a[href]');
+    first?.focus({ preventScroll: true });
+
+    const handleKey = event => {
+      if (event.key === 'Escape') {
+        closeMenu();
+        toggleBtnRef.current?.focus();
+      }
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [open, closeMenu]);
+
   return (
     <div
       className={(className ? className + ' ' : '') + 'staggered-menu-wrapper' + (isFixed ? ' fixed-wrapper' : '')}
@@ -396,7 +419,7 @@ export const StaggeredMenu = ({
         </button>
       </header>
 
-      <aside id="staggered-menu-panel" ref={panelRef} className="staggered-menu-panel" aria-hidden={!open}>
+      <aside id="staggered-menu-panel" ref={panelRef} className="staggered-menu-panel" aria-hidden={!open} inert={!open}>
         <div className="sm-panel-inner">
           <ul className="sm-panel-list" role="list" data-numbering={displayItemNumbering || undefined}>
             {items && items.length ? (

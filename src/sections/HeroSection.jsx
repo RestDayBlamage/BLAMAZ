@@ -6,12 +6,10 @@ import "./HeroSection.css";
 
 // Hero jak na polymer.ws: ekran podzielony na dwa zdjęcia z wypraw (na telefonie jedno pod drugim).
 // Najechane zdjęcie rozszerza się kosztem drugiego. Ekran ładowania znika po wczytaniu pierwszego zdjęcia.
-// Dwie losowe wyprawy ze zdjęciem – inne przy każdym wejściu na stronę (losowanie raz, przy wczytaniu modułu).
-const shuffled = TRIPS.filter((t) => t.photo)
-  .map((trip) => ({ trip, key: Math.random() }))
-  .sort((a, b) => a.key - b.key)
-  .map(({ trip }) => trip);
-const [first, second] = shuffled;
+// Stała para zdjęć w hero (decyzja właściciela – „ma być zawsze”): po lewej Labubu Macharelli 2025,
+// po prawej zdjęcie ekipy z Rest Day Blamage 2023. Na telefonie jedno pod drugim w tej samej kolejności.
+const HERO_YEARS = [2025, 2023];
+const [first, second] = HERO_YEARS.map((year) => TRIPS.find((t) => t.year === year));
 
 const tagline = (trip) =>
   `${trip.year} · ${trip.countries.length > 3 ? `${trip.countries.length} countries` : trip.countries.map((c) => COUNTRIES[c]?.name ?? c).join(" · ")} · ${formatKm(trip.km)}`;
@@ -32,6 +30,7 @@ export default function HeroSection() {
           tagline={tagline(trip)}
           href="#trips"
           linkLabel={`See the ${trip.year} trip`}
+          sizes="(min-width: 640px) 60vw, 100vw"
           eager
           onImageLoad={i === 0 ? hidePreloader : undefined}
         />

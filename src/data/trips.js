@@ -1,13 +1,9 @@
 // Wszystkie dane wypraw w jednym miejscu – używane przez mapę tras i galerię wypraw.
 // Trasy w szarościach (od najnowszej – najciemniejszej; wskazana na mapie robi się pomarańczowa) + własny wzór linii (dash),
 // żeby wyprawy odróżniały się od siebie także bez koloru. Wzory w jednostkach SVG przy grubości linii 2.5.
-// photo jest opcjonalne – bez zdjęcia karta w galerii ma szare tło, a hero bierze tylko wyprawy ze zdjęciem.
+// photo ({ src, srcSet, width, height } z photos.js) jest opcjonalne – bez zdjęcia karta w galerii ma szare tło, a hero bierze tylko wyprawy ze zdjęciem.
 import { COLORS } from "../styles/tokens";
-import photo2026 from "../assets/images/trip-2026.webp";
-import photo2025 from "../assets/images/trip-2025.webp";
-import photo2024 from "../assets/images/trip-2024.webp";
-import photo2023 from "../assets/images/trip-2023.webp";
-import photo2022 from "../assets/images/trip-2022.webp";
+import { PHOTOS } from "./photos";
 
 const [G1, G2, G3, G4, G5] = COLORS.routeShades;
 // Trasy GPX w public/data/<rok>/ (uproszczone; surowe pliki ze Stravy w gpx-src/, poza gitem).
@@ -34,7 +30,7 @@ export const TRIPS = [
     elevation: "5 890 m",
     avgSpeed: "106.0 km/day",
     countries: ["SI"],
-    photo: photo2026, // jezioro Jasna (Kranjska Gora), koziorożec
+    photo: PHOTOS.trip2026, // jezioro Jasna (Kranjska Gora), koziorożec
     gpx: `${GPX}/2026/2026full.gpx`,
   },
   {
@@ -47,7 +43,7 @@ export const TRIPS = [
     elevation: "8 110 m",
     avgSpeed: "116.4 km/day",
     countries: ["IT", "VA", "SM"],
-    photo: photo2025,
+    photo: PHOTOS.trip2025,
     gpx: `${GPX}/2025/2025full.gpx`,
   },
   {
@@ -60,7 +56,7 @@ export const TRIPS = [
     elevation: "10 350 m",
     avgSpeed: "108.0 km/day",
     countries: ["CH", "LI", "IT"],
-    photo: photo2024,
+    photo: PHOTOS.trip2024,
     gpx: `${GPX}/2024/2024full.gpx`,
   },
   {
@@ -73,7 +69,7 @@ export const TRIPS = [
     elevation: "15 090 m",
     avgSpeed: "129.6 km/day",
     countries: ["CZ", "DE", "AT", "IT", "SI", "HR", "PL"],
-    photo: photo2023,
+    photo: PHOTOS.trip2023,
     gpx: `${GPX}/2023/2023full.gpx`,
   },
   {
@@ -86,7 +82,7 @@ export const TRIPS = [
     elevation: "12 250 m",
     avgSpeed: "110.4 km/day",
     countries: ["PL", "CZ", "AT", "SK", "HU"],
-    photo: photo2022,
+    photo: PHOTOS.trip2022,
     gpx: `${GPX}/2022/2022full.gpx`,
   },
 ];

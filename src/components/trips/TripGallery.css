@@ -24,9 +24,14 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   min-width: 52px;
-  height: 36px;
+  height: 44px; /* minimalny cel dotyku na telefonie */
   padding: 0 14px;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   border-radius: var(--radius-btn);
   background: var(--c-silver-60);
   color: var(--c-dark);
@@ -64,8 +69,8 @@
 }
 
 .trip-arrow {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   font-size: 1.25rem;
   line-height: 1;
   transition: transform var(--dur-fast) ease;

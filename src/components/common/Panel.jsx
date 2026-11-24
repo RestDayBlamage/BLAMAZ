@@ -19,8 +19,11 @@ export default function Panel({
   eager = false,
   onImageLoad,
   className = "",
+  sizes = "100vw", // szerokość kafla na ekranie – podpowiedź dla srcSet
 }) {
   const ref = useRef(null);
+  // image: adres pliku albo { src, srcSet, width, height } z data/photos.js
+  const img = typeof image === "string" ? { src: image } : image;
   const [inView, setInView] = useState(false);
 
   useEffect(() => {
@@ -43,7 +46,11 @@ export default function Panel({
     <div ref={ref} className={`panel panel--${variant} panel--${align} ${inView ? "is-in" : ""} ${className}`} data-light-ui>
       <img
         className="panel__img"
-        src={image}
+        src={img.src}
+        srcSet={img.srcSet}
+        sizes={sizes}
+        width={img.width}
+        height={img.height}
         alt={alt}
         loading={eager ? "eager" : "lazy"}
         decoding="async"

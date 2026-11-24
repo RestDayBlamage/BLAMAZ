@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import L from "leaflet";
 import omnivore from "@mapbox/leaflet-omnivore";
 import { createMap, addResetControl, addFullscreenControl, addBasemapControl, fitPadding } from "./mapKit";
@@ -54,6 +54,12 @@ const COUNTRY_STYLE = {
 };
 
 
+// Przybliżony obszar wszystkich tras (płd.-zach. i płn.-wsch. narożnik) – kadr startowy mapy
+const ROUGH_BOUNDS = [
+  [41.8, 7.0],
+  [54.5, 21.5],
+];
+
 // Granice krajów (Natural Earth, uproszczone) – pobierane raz, przy pierwszym wyborze flagi
 let bordersPromise;
 const loadBorders = () =>
@@ -62,15 +68,20 @@ const loadBorders = () =>
     return r.json();
   }));
 
-const TripsMap = ({ country = null, label, title }) => {
+// selected / onSelectedChange: wybrana wyprawa (rok) jest wspólna z galerią (stan w TripsSection)
+const TripsMap = ({ country = null, selected = null, onSelectedChange = () => {}, label, title }) => {
   const el = useRef(null);
   const mapRef = useRef(null);
   const layers = useRef({}); // rok -> { line, casing, hit, ends }
   const focusLayer = useRef(null);
   const countryLayer = useRef(null);
-  const [selected, setSelected] = useState(null); // null = wszystkie
+  // Kliknięcie tej samej trasy drugi raz odznacza ją. useEffectEvent – handlery Leafleta tworzone raz
+  // w efekcie poniżej zawsze widzą aktualny wybór.
+  const toggleTrip = useEffectEvent((year) => onSelectedChange(selected === year ? null : year));
+  const clearTrip = useEffectEvent(() => onSelectedChange(null));
   const [hovered, setHovered] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(0); // ile tras GPX się nie wczytało
 
   const fitTo = (year) => {
     const map = mapRef.current;
@@ -83,10 +94,18 @@ const TripsMap = ({ country = null, label, title }) => {
 
   useEffect(() => {
     const map = createMap(el.current);
-    map.setView([46, 12], 5);
+    // Zanim wczytają się pliki GPX: kadr na obszar wszystkich wypraw (Rzym–Gdańsk, Szwajcaria–Węgry),
+    // a nie pół Europy z Afryką. Po wczytaniu fitTo(null) dopasowuje kadr dokładnie do tras.
+    map.fitBounds(ROUGH_BOUNDS, fitPadding());
     mapRef.current = map;
 
     let pending = TRIPS.length;
+    // Po ostatniej trasie (wczytanej albo nie) chowamy komunikat i kadrujemy mapę na to, co jest
+    const settle = () => {
+      if (--pending > 0) return;
+      setLoaded(true);
+      fitTo(null);
+    };
     TRIPS.forEach((trip) => {
       const casing = L.geoJson(null, { style: CASING, interactive: false }).addTo(map);
       const line = omnivore
@@ -104,20 +123,20 @@ const TripsMap = ({ country = null, label, title }) => {
           );
           hit.on("mouseover", () => setHovered(trip.year));
           hit.on("mouseout", () => setHovered(null));
-          hit.on("click", () => setSelected((s) => (s === trip.year ? null : trip.year)));
+          hit.on("click", () => toggleTrip(trip.year));
           layers.current[trip.year].hit = hit;
-          if (--pending === 0) {
-            setLoaded(true);
-            fitTo(null);
-          }
+          settle();
         })
-        .on("error", () => --pending === 0 && setLoaded(true))
+        .on("error", () => {
+          setFailed((n) => n + 1);
+          settle();
+        })
         .addTo(map);
       layers.current[trip.year] = { line, casing };
     });
 
     addResetControl(map, () => {
-      setSelected(null);
+      clearTrip();
       fitTo(null);
     });
     addFullscreenControl(map);
@@ -227,7 +246,7 @@ const TripsMap = ({ country = null, label, title }) => {
               type="button"
               className={`map-chip ${selected === null ? "is-active" : ""}`}
               aria-pressed={selected === null}
-              onClick={() => setSelected(null)}
+              onClick={() => onSelectedChange(null)}
             >
               All trips
             </button>
@@ -237,7 +256,7 @@ const TripsMap = ({ country = null, label, title }) => {
                 type="button"
                 className={`map-chip ${selected === t.year ? "is-active" : ""}`}
                 aria-pressed={selected === t.year}
-                onClick={() => setSelected((s) => (s === t.year ? null : t.year))}
+                onClick={() => onSelectedChange(selected === t.year ? null : t.year)}
                 onMouseEnter={() => setHovered(t.year)}
                 onMouseLeave={() => setHovered(null)}
               >
@@ -256,6 +275,13 @@ const TripsMap = ({ country = null, label, title }) => {
         <div className="map-card">
           <div ref={el} className="map-canvas" />
           {!loaded && <div className="map-loading">Loading routes…</div>}
+          {loaded && failed > 0 && (
+            <div className="map-loading" role="status">
+              {failed === TRIPS.length
+                ? "Routes didn't load. Check your connection and refresh."
+                : `${failed} of ${TRIPS.length} routes didn't load. Refresh to try again.`}
+            </div>
+          )}
         </div>
       </div>
     </div>

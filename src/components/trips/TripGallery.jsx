@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { TRIPS, formatKm } from "../../data/trips";
 import { COUNTRIES } from "../../data/countries";
 import RouteSwatch from "../common/RouteSwatch";
+import { COLORS } from "../../styles/tokens";
 import "./TripGallery.css";
 
 // Galeria wypraw: filtr po krajach (flagi), karuzela kart (przeciąganie myszą / strzałki – jak lista
@@ -24,25 +25,67 @@ function Flag({ code, size = 20 }) {
   );
 }
 
+// Blokada przewijania strony pod otwartym oknem szczegółów
+const lockScroll = (on) => {
+  document.body.style.overflow = on ? "hidden" : "";
+};
+
 const trips = [...TRIPS].sort((a, b) => b.year - a.year);
 const countryCodes = [...new Set(trips.flatMap((t) => t.countries))];
 
-export default function TripGallery({ country = null, onCountryChange = () => {} }) {
+// selected / onSelectedChange: wyprawa wybrana na mapie albo kliknięciem karty (stan w TripsSection)
+export default function TripGallery({ country = null, onCountryChange = () => {}, selected = null, onSelectedChange = () => {} }) {
   const [active, setActive] = useState(null);
   const railRef = useRef(null);
   const drag = useRef(null);
+  const dialogRef = useRef(null);
+  const openerRef = useRef(null); // karta, która otworzyła okno – po zamknięciu wraca na nią fokus
 
   const visible = !country ? trips : trips.filter((t) => t.countries.includes(country));
 
-  // Okno szczegółów: blokada przewijania strony i zamykanie klawiszem Esc
+  const openTrip = (trip, e) => {
+    openerRef.current = e.currentTarget;
+    setActive(trip);
+    onSelectedChange(trip.year); // mapa w tle od razu pokazuje tę trasę
+  };
+
+  // Wyprawa wybrana na mapie: karuzela przewija się do jej karty (tylko w poziomie, strona stoi w miejscu)
+  useEffect(() => {
+    const rail = railRef.current;
+    const card = selected && rail?.querySelector(`[data-year="${selected}"]`);
+    if (!card) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    rail.scrollTo({ left: card.offsetLeft - rail.firstElementChild.offsetLeft, behavior: reduce ? "auto" : "smooth" });
+  }, [selected]);
+
+  // Okno szczegółów: blokada przewijania strony, Esc zamyka, Tab nie wychodzi poza okno,
+  // po zamknięciu fokus wraca na kartę wyprawy
   useEffect(() => {
     if (!active) return;
-    document.body.style.overflow = "hidden";
-    const onKey = (e) => e.key === "Escape" && setActive(null);
+    lockScroll(true);
+    const onKey = (e) => {
+      if (e.key === "Escape") {
+        setActive(null);
+        return;
+      }
+      if (e.key !== "Tab" || !dialogRef.current) return;
+      const focusable = dialogRef.current.querySelectorAll("button, a[href], [tabindex]:not([tabindex='-1'])");
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && (document.activeElement === first || !dialogRef.current.contains(document.activeElement))) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && (document.activeElement === last || !dialogRef.current.contains(document.activeElement))) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
     window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = "";
+      lockScroll(false);
       window.removeEventListener("keydown", onKey);
+      openerRef.current?.focus({ preventScroll: true });
     };
   }, [active]);
 
@@ -94,9 +137,14 @@ export default function TripGallery({ country = null, onCountryChange = () => {}
               className={`trip-filter ${country === code ? "is-active" : ""}`}
               aria-pressed={country === code}
               aria-label={COUNTRIES[code]?.name ?? code}
+              title={COUNTRIES[code]?.name ?? code}
               onClick={() => onCountryChange(country === code ? null : code)}
             >
               <Flag code={code} />
+              {/* Kod kraju obok flagi – małe flagi bywają nie do odróżnienia (np. Słowenia i Rosja) */}
+              <span className="trip-filter__code" aria-hidden="true">
+                {code}
+              </span>
             </button>
           ))}
         </div>
@@ -119,10 +167,25 @@ export default function TripGallery({ country = null, onCountryChange = () => {}
         onPointerLeave={onPointerUp}
       >
         {visible.map((trip) => (
-          <li key={trip.year} className="trip-slide">
-            <button type="button" className="trip-card" onClick={() => setActive(trip)} draggable={false}>
+          <li key={trip.year} className="trip-slide" data-year={trip.year}>
+            <button type="button" className={`trip-card ${selected === trip.year ? "is-selected" : ""}`}
+              aria-current={selected === trip.year || undefined}
+              onClick={(e) => openTrip(trip, e)}
+              draggable={false}
+            >
               {trip.photo ? (
-              <img className="trip-card__photo" src={trip.photo} alt="" loading="lazy" decoding="async" draggable={false} />
+              <img
+                className="trip-card__photo"
+                src={trip.photo.src}
+                srcSet={trip.photo.srcSet}
+                sizes="(min-width: 768px) 360px, 80vw"
+                width={trip.photo.width}
+                height={trip.photo.height}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                draggable={false}
+              />
             ) : (
               <span className="trip-card__photo trip-card__photo--empty" aria-hidden="true">
                 {trip.year}
@@ -132,7 +195,8 @@ export default function TripGallery({ country = null, onCountryChange = () => {}
                 <span className="trip-card__title">{trip.title}</span>
                 <span className="trip-year">
                   {trip.year}
-                  <RouteSwatch color={trip.color} dash={trip.dash} width={64} />
+                  {/* Wybrana wyprawa – kreska w kolorze akcentu, tak jak jej trasa na mapie */}
+                  <RouteSwatch color={selected === trip.year ? COLORS.accent : trip.color} dash={trip.dash} width={64} />
                 </span>
                 <span className="trip-flags">
                   {trip.countries.slice(0, 3).map((c) => (
@@ -150,6 +214,7 @@ export default function TripGallery({ country = null, onCountryChange = () => {}
       {active && (
         <div className="trip-modal" onClick={() => setActive(null)}>
           <div
+            ref={dialogRef}
             className="trip-modal__dialog"
             role="dialog"
             aria-modal="true"
@@ -166,7 +231,17 @@ export default function TripGallery({ country = null, onCountryChange = () => {}
               {active.year}
               <RouteSwatch color={active.color} dash={active.dash} width={64} />
             </span>
-            {active.photo && <img className="trip-modal__photo" src={active.photo} alt={active.title} />}
+            {active.photo && (
+              <img
+                className="trip-modal__photo"
+                src={active.photo.src}
+                srcSet={active.photo.srcSet}
+                sizes="(min-width: 768px) 640px, 100vw"
+                width={active.photo.width}
+                height={active.photo.height}
+                alt={active.title}
+              />
+            )}
             <dl className="trip-stats">
               <dt>Distance</dt>
               <dd>{formatKm(active.km)}</dd>

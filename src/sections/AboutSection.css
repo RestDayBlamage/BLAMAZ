@@ -1,39 +1,110 @@
-/* Trzy kolumny historii pod kartą „O nas” – wyśrodkowane, szary tytuł, mała miniatura, tekst „z maszyny” */
+/* Trzy historie pod kartą „O nas”: duże zdjęcie + tekst, na przemian lewo/prawo, lekko krzywo (jak źle
+   złożona mapa). Między historiami „objazd” – przerywana linia trasy (AboutSection.jsx). Tylko tokeny z global.css. */
 .story {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 48px;
+  gap: 0;
   padding-block: var(--spacer-small);
+  list-style: none;
 }
 
 .story__item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display: grid;
   gap: 20px;
-  text-align: center;
+  --tilt: -1.2deg;
 }
 
-.story__title {
-  max-width: 14em;
-  color: var(--c-grey-02);
+.story__item--flip {
+  --tilt: 1deg;
+}
+
+/* Objazd między historiami – na telefonie krótka pionowa wstawka */
+.story__detour {
+  display: block;
+  width: 100%;
+  height: 72px;
+  margin-block: 8px 16px;
+}
+
+.story__detour--flip {
+  scale: -1 1;
+}
+
+.story__figure {
+  margin: 0;
+  rotate: var(--tilt);
 }
 
 .story__img {
-  width: 96px;
-  height: 64px;
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
-  border-radius: var(--radius-small);
+  border-radius: var(--radius-medium);
+  background: var(--c-stone);
+}
+
+.story__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.story__title {
+  max-width: 12em;
+  color: var(--c-ink);
+}
+
+.story__meta {
+  color: var(--c-grey-02);
 }
 
 .story__text {
-  max-width: 30ch;
+  max-width: 40ch;
   color: var(--c-dark);
+  font-size: 1.0625rem;
+  line-height: 1.45;
 }
 
-@media (min-width: 640px) {
-  .story {
-    grid-template-columns: repeat(3, 1fr);
-    gap: clamp(32px, 6vw, 128px);
+/* Tablet i komputer: zdjęcie i tekst obok siebie, co druga historia odwrócona; objazd przechodzi
+   z kolumny zdjęcia do kolumny zdjęcia następnej historii */
+@media (min-width: 768px) {
+  .story__item {
+    grid-template-columns: 7fr 5fr;
+    grid-template-areas:
+      "detour detour"
+      "figure body";
+    align-items: center;
+    column-gap: clamp(32px, 6vw, 96px);
+  }
+
+  .story__item--flip {
+    grid-template-columns: 5fr 7fr;
+    grid-template-areas:
+      "detour detour"
+      "body figure";
+  }
+
+  .story__detour {
+    grid-area: detour;
+    height: clamp(96px, 12vw, 160px);
+    margin-block: 16px 24px;
+  }
+
+  .story__figure {
+    grid-area: figure;
+  }
+
+  .story__body {
+    grid-area: body;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .story__figure {
+    transition: rotate var(--dur-slow) var(--ease-out-expo);
+  }
+
+  .story__item:hover .story__figure {
+    rotate: 0deg;
   }
 }

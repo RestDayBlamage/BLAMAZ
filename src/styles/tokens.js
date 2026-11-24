@@ -4,7 +4,7 @@ export const COLORS = {
   ink: "#111111",
   white: "#ffffff",
   grey100: "#d9d9d9",
-  muted: "#8c8c8c",
+  muted: "#676767", // „Socials” i najechanie w menu – kontrast ≥4.5:1 na tle panelu (było #8c8c8c, 3.1:1)
   dark: "#444444", // szarości z polymer.ws
   silver: "#d0d0d0",
   bg: "#f0f0f0",

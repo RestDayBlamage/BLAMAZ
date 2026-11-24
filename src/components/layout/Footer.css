@@ -2,7 +2,7 @@
 
 .footer {
   position: relative;
-  z-index: 2000;
+  z-index: 1; /* pod stałym nagłówkiem (.site-header, z-index 1000) – inaczej model 3D zasłaniał przycisk MENU */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -32,12 +32,15 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 0;
 }
 
 .footer__nav a {
-  display: inline-block;
-  padding: 6px 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px; /* minimalny cel dotyku na telefonie */
   transition: color var(--dur-fast) ease;
 }
 
@@ -51,11 +54,6 @@
   gap: 8px;
   margin-top: 48px;
   color: var(--c-grey-02);
-}
-
-.counters {
-  width: 100%;
-  margin-top: 32px;
 }
 
 @media (min-width: 640px) {

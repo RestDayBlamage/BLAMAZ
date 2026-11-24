@@ -45,11 +45,6 @@ export default function Footer() {
         <p>Sometimes it’s smooth, sometimes it’s a BLaMaZ.</p>
         <p className="pitch">Blamaż.vc © {new Date().getFullYear()} All rights reserved</p>
       </div>
-
-      {/* Licznik Elfsight – <script> wpisany w JSX nie wykonuje się w React, więc widget się nie ładuje */}
-      <div className="counters">
-        <div className="elfsight-app-674025be-049e-42de-b11d-ee718c146af0" data-elfsight-app-lazy></div>
-      </div>
     </footer>
   );
 }
