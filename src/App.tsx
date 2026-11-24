@@ -13,7 +13,7 @@ export default function App() {
   return (
     <>
       <Header />
-      <main>
+      <main id="main" tabIndex={-1}>
         <HeroSection />
         <AboutSection />
         <TripsSection />

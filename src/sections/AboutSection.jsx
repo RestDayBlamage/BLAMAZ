@@ -11,7 +11,7 @@ import "./AboutSection.css";
 // - Učka: najwyższy punkt śladu GPX 2023 (ok. 1 347 m, nad Opatiją, nocleg w Ičići),
 // - Splügen: wyprawa 2024, wrzesień – całodniowy podjazd i śnieg na górze (relacja ekipy); ślad GPX 2024
 //   dochodzi do ok. 1 982 m między Thusis a Chiavenną (uproszczony ślad ścina szczyt przełęczy, stąd „ponad 2 000 m”).
-// Zdjęcia ilustrują nastrój historii – nie twierdzimy, że zrobiono je dokładnie w tych miejscach.
+// Historia Splügen ma zdjęcie z tej samej wyprawy (2024). Pozostałe zdjęcia ilustrują nastrój historii – nie twierdzimy, że zrobiono je dokładnie w tych miejscach.
 const trip = (year) => TRIPS.find((t) => t.year === year);
 
 const STORY = [
@@ -33,8 +33,8 @@ const STORY = [
   },
   {
     year: 2024,
-    photo: PHOTOS.mural,
-    alt: "Cyclist with a loaded bike in front of a colourful mural",
+    photo: PHOTOS.trip2024,
+    alt: "The BLaMaZ crew on the 2024 Italo Disco trip",
     title: "Embrace imperfection, ride anyway",
     meta: "2024 · Splügen Pass · over 2 000 m",
     text: "September, the Splügen Pass. We climbed all day, and at the top the snow was waiting for us. Laughing at mistakes, and riding anyway.",
@@ -66,7 +66,7 @@ export default function AboutSection() {
         image={PHOTOS.wildfire}
         alt="Wildfire smoke on a hillside seen from the road"
         title="Blamage means failure. BLaMaZ doesn’t mean defeat."
-        tagline="Read our story"
+        tagline="Five summers of wrong turns"
         href="#story"
         linkLabel="Read our story"
       />

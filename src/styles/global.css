@@ -209,6 +209,31 @@ button:focus-visible {
   pointer-events: none;
 }
 
+/* „Skip to content” – schowany nad ekranem, wjeżdża po fokusie z klawiatury */
+.skip-link {
+  position: absolute;
+  top: 16px;
+  left: var(--gutter);
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: var(--radius-btn);
+  background: var(--c-ink);
+  color: var(--c-white);
+  pointer-events: auto;
+  translate: 0 -200%;
+}
+
+.skip-link:focus-visible {
+  translate: 0 0;
+}
+
+main:focus {
+  outline: none; /* cel „Skip to content” – fokus programowy, bez ramki na całej stronie */
+}
+
 .site-header .staggered-menu-wrapper {
   height: 100%;
 }

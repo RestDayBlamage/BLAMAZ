@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { TRIPS, formatKm } from "../../data/trips";
 import { COUNTRIES } from "../../data/countries";
 import RouteSwatch from "../common/RouteSwatch";
+import ArrowButton from "../common/ArrowButton";
 import { COLORS } from "../../styles/tokens";
 import "./TripGallery.css";
 
@@ -9,15 +10,16 @@ import "./TripGallery.css";
 // produktów na polymer.ws) i okno ze szczegółami.
 // Wybrany kraj jest wspólny z mapą tras (stan w TripsSection) – mapa pokazuje jego kontur.
 
-function Flag({ code, size = 20 }) {
+// decorative: flaga obok podpisanej nazwy kraju – bez alt, żeby czytnik nie czytał nazwy dwa razy
+function Flag({ code, size = 20, decorative = false }) {
   const country = COUNTRIES[code];
   if (!country) return null;
   return (
     <img
       className="trip-flag"
       src={country.flag}
-      alt={country.name}
-      title={country.name}
+      alt={decorative ? "" : country.name}
+      title={decorative ? undefined : country.name}
       width={size}
       height={size}
       loading="lazy"
@@ -47,6 +49,15 @@ export default function TripGallery({ country = null, onCountryChange = () => {}
     openerRef.current = e.currentTarget;
     setActive(trip);
     onSelectedChange(trip.year); // mapa w tle od razu pokazuje tę trasę
+  };
+
+  // „Show route on map”: zamknięcie okna; przewinięcie do mapy robi sprzątanie efektu okna niżej,
+  // dopiero po zdjęciu blokady przewijania (body overflow: hidden blokuje też scrollIntoView)
+  const scrollToMapRef = useRef(false);
+  const showOnMap = (e) => {
+    e.preventDefault();
+    scrollToMapRef.current = true;
+    setActive(null);
   };
 
   // Wyprawa wybrana na mapie: karuzela przewija się do jej karty (tylko w poziomie, strona stoi w miejscu)
@@ -86,6 +97,11 @@ export default function TripGallery({ country = null, onCountryChange = () => {}
       lockScroll(false);
       window.removeEventListener("keydown", onKey);
       openerRef.current?.focus({ preventScroll: true });
+      if (scrollToMapRef.current) {
+        scrollToMapRef.current = false;
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        document.getElementById("trips")?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+      }
     };
   }, [active]);
 
@@ -148,6 +164,10 @@ export default function TripGallery({ country = null, onCountryChange = () => {}
             </button>
           ))}
         </div>
+        {/* Czytnik ekranu ogłasza wynik filtra (wcześniej karty znikały bez słowa) */}
+        <p className="sr-only" role="status">
+          {country ? `${visible.length} ${visible.length === 1 ? "trip" : "trips"} through ${COUNTRIES[country]?.name ?? country}` : ""}
+        </p>
         <div className="trip-arrows">
           <button type="button" className="trip-arrow" aria-label="Previous trip" onClick={() => step(-1)}>
             ←
@@ -252,13 +272,17 @@ export default function TripGallery({ country = null, onCountryChange = () => {}
               <dt>Avg speed</dt>
               <dd>{active.avgSpeed}</dd>
             </dl>
-            <div className="trip-flags">
+            {/* Kraje z nazwami (same flagi były nieczytelne i niewidoczne dla czytnika ekranu) */}
+            <ul className="trip-modal__countries">
               {active.countries.map((c) => (
-                <span key={c} className="trip-flags__item">
-                  <Flag code={c} size={22} />
-                </span>
+                <li key={c} className="trip-modal__country">
+                  <Flag code={c} size={22} decorative />
+                  {COUNTRIES[c]?.name ?? c}
+                </li>
               ))}
-            </div>
+            </ul>
+            {/* Trasa jest już zaznaczona na mapie (openTrip) – przycisk zamyka okno i przewija do mapy */}
+            <ArrowButton href="#trips" label="Show route on map" tone="silver" onClick={showOnMap} />
           </div>
         </div>
       )}

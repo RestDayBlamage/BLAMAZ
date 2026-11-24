@@ -363,6 +363,21 @@ export const StaggeredMenu = ({
       if (event.key === 'Escape') {
         closeMenu();
         toggleBtnRef.current?.focus();
+        return;
+      }
+      // Tab krąży między przyciskiem MENU a linkami panelu – nie ucieka do strony pod otwartym menu
+      if (event.key !== 'Tab') return;
+      const focusables = [toggleBtnRef.current, ...(panelRef.current?.querySelectorAll('a[href]') ?? [])].filter(Boolean);
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const inside = focusables.includes(document.activeElement);
+      if (event.shiftKey && (document.activeElement === first || !inside)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || !inside)) {
+        event.preventDefault();
+        first.focus();
       }
     };
     document.addEventListener('keydown', handleKey);

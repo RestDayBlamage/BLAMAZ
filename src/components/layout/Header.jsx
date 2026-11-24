@@ -8,6 +8,10 @@ const socialItems = SOCIALS.map((s) => ({ label: s.label, link: s.url }));
 export default function Header() {
   return (
     <header className="site-header">
+      {/* Pierwszy element dla klawiatury – pomija logo i menu (widoczny dopiero po fokusie) */}
+      <a className="skip-link pitch" href="#main">
+        Skip to content
+      </a>
       <BrandLogo />
       <StaggeredMenu
         position="right"

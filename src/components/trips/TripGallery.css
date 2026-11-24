@@ -222,8 +222,8 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-pill);
   background: var(--c-silver-60);
   font-size: 1.4rem;
@@ -249,6 +249,22 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--c-grey-02);
+}
+
+/* Kraje wyprawy w oknie: flaga + nazwa, w rzędzie z zawijaniem */
+.trip-modal__countries {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  margin: 20px 0 28px;
+  list-style: none;
+}
+
+.trip-modal__country {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--c-dark);
 }
 
 @keyframes trip-fade {

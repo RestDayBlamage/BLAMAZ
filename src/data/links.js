@@ -8,12 +8,12 @@ export const SOCIALS = [
   { id: "github", label: "GitHub", url: "https://github.com/RestDayBlamage" },
 ];
 
-// Sekcje strony w menu
+// Sekcje strony w menu. Bez osobnych ariaLabel – czytnik ekranu czyta widoczny tekst (WCAG 2.5.3).
+// „Email” usunięty: „Contact” prowadzi do bloku kontaktu w stopce z widocznym adresem.
 export const NAV = [
-  { label: "Home", ariaLabel: "Go to home page", link: "#home" },
-  { label: "About", ariaLabel: "Learn about us", link: "#aboutus" },
-  { label: "Camps", ariaLabel: "View our camps", link: "#camps" },
-  { label: "Trips", ariaLabel: "View our trips", link: "#trips" },
-  { label: "Contact", ariaLabel: "Get in touch", link: "#contact" },
-  { label: "Email", ariaLabel: "Email us", link: `mailto:${EMAIL}` },
+  { label: "Home", link: "#home" },
+  { label: "About", link: "#aboutus" },
+  { label: "Camps", link: "#camps" },
+  { label: "Trips", link: "#trips" },
+  { label: "Contact", link: "#contact" },
 ];

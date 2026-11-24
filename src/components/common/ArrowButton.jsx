@@ -3,7 +3,7 @@
 // stretch: klikalny cały kafel nad przyciskiem (rodzic musi mieć position: relative).
 // tone: "light" – półprzezroczysta biel na zdjęciach, "silver" – szara na jasnym tle, "accent" – kontakt.
 // external: strzałka skośna ↗ i otwarcie w nowej karcie. Linki mailto: dostają ton "accent" automatycznie.
-export default function ArrowButton({ href, label, tone, stretch = false, external = false }) {
+export default function ArrowButton({ href, label, tone, stretch = false, external = false, onClick }) {
   const isMail = href?.startsWith("mailto:");
   const resolvedTone = tone === undefined || isMail ? (isMail ? "accent" : "light") : tone;
 
@@ -11,6 +11,7 @@ export default function ArrowButton({ href, label, tone, stretch = false, extern
     <a
       className={`arrow-btn arrow-btn--${resolvedTone} ${external ? "arrow-btn--external" : ""} ${stretch ? "arrow-btn--stretch" : ""}`}
       href={href}
+      onClick={onClick}
       {...(external && { target: "_blank", rel: "noopener noreferrer" })}
     >
       <span className="arrow-btn__label">{label}</span>
